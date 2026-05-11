@@ -74,7 +74,7 @@ constructor(
     private var dialogPadding = 0
     private var dayColor = "#FFFFFF".toColorInt()
     private var nightColor = "#131316".toColorInt()
-    private var isIconColorSet = false
+    private var isCustomView = false
     private var dontShowAgainSet = false
     private val dialog: Dialog
     private var headerLayout: RelativeLayout
@@ -84,13 +84,13 @@ constructor(
     private var titleIcon: AppCompatImageView? = null
     private var title: AppCompatTextView? = null
     private var message: AppCompatTextView
-    private var positiveButtonTextView: AppCompatTextView? = null
-    private var negativeButtonTextView: AppCompatTextView? = null
-    private var neutralButtonTextView: AppCompatTextView? = null
+    private var binding: PrimeDialogLayoutBinding
     private var positiveButtonLayout: LinearLayout? = null
     private var negativeButtonLayout: LinearLayout? = null
     private var neutralButtonLayout: LinearLayout? = null
-    private var binding: PrimeDialogLayoutBinding
+    private var positiveButtonTextView: AppCompatTextView? = null
+    private var negativeButtonTextView: AppCompatTextView? = null
+    private var neutralButtonTextView: AppCompatTextView? = null
     private var windowAnimationStyleRes = R.style.WindowAnimationStyle
 
     private var iconAttributes: IconAttributes = IconAttributes()
@@ -106,7 +106,8 @@ constructor(
         var iconHeight: Int? = null,
         var bitmap: Bitmap? = null,
         var isIconSet: Boolean = false,
-        var animation: Animation? = null
+        var animation: Animation? = null,
+        var overrideHeaderTint: Boolean? = null
     )
 
     private data class TitleAttributes(
@@ -122,8 +123,6 @@ constructor(
     )
 
     init {
-        isCustomView = false
-        isHeaderShown = false
         val layoutInflater = LayoutInflater.from(context)
         binding = PrimeDialogLayoutBinding.inflate(layoutInflater)
         dialog = Dialog(context, styleRes)
@@ -224,6 +223,12 @@ constructor(
         return setWindowAnimation(if(isEnabled) windowAnimationStyleRes else 0)
     }
 
+    /** Indicates that a header background or color has been set. */
+    private var isHeaderShown: Boolean = false
+
+    /** Indicates that a header related functions has been called. */
+    private var isHeaderConfiguring = false
+
     @JvmOverloads
     /** Sets a drawable resources as the dialog header.
      * @param drawableRes The drawable resource id.
@@ -233,7 +238,8 @@ constructor(
         @DrawableRes drawableRes: Int,
         isAnimated: Boolean = true
     ): PrimeDialog {
-        prepareHeader()
+        isHeaderShown = true
+        headerLayout.isVisible = true
         if(isAnimated){
             binding.kenBurnsView.apply {
                 setImageResource(drawableRes)
@@ -269,7 +275,7 @@ constructor(
      * @param heightDp The desired height in dp
      */
     fun setHeaderHeight(heightDp: Int): PrimeDialog {
-        prepareHeader()
+        isHeaderConfiguring = true
         val layoutParams = headerLayout.layoutParams as RelativeLayout.LayoutParams
         layoutParams.height = toDP(heightDp)
         return this
@@ -309,14 +315,13 @@ constructor(
         return this
     }
 
-    private var iconTintColor = 0
     fun setIconTintRes(@ColorRes colorRes: Int): PrimeDialog {
         return setIconTint(getColor(colorRes))
     }
 
     fun setIconTint(@ColorInt color: Int): PrimeDialog {
-        iconTintColor = color
-        isIconColorSet = true
+        iconAttributes.tint = getColor(color)
+        iconAttributes.overrideHeaderTint = true
         return this
     }
 
@@ -390,7 +395,7 @@ constructor(
     }
 
     private fun setHeaderOverlayEnabled() {
-        prepareHeader()
+        isHeaderConfiguring = true
         overlay.isVisible = true
     }
 
@@ -427,7 +432,6 @@ constructor(
     private fun initializeTitle(isVisible: Boolean = true): AppCompatTextView {
         if(isHeaderShown){
             title = binding.dialogTitle
-            titleAttributes.color = Color.WHITE
         } else {
             title = binding.dialogTitle2.apply {
                 this.isVisible = isVisible
@@ -1116,21 +1120,26 @@ constructor(
         val isTitleAndIconApply = accentColorMode == ACCENT_MODE_ALL || accentColorMode == ACCENT_MODE_TITLE
         val color = if (isNightModeActive) Color.WHITE else Color.BLACK
 
-        if (!isIconColorSet && isIconTintEnabled) {
+        val isIconTintSet = iconAttributes.tint != null
+        if (!isIconTintSet && isIconTintEnabled) {
             if(isTitleAndIconApply) {
-                applyIconTint(colorAccent)
+                val finalColor = if(isHeaderShown) Color.WHITE else colorAccent
+                applyIconTint(finalColor)
             } else {
-                applyIconTint(color)
+                val finalColor = if(isHeaderShown) Color.WHITE else color
+                applyIconTint(finalColor)
             }
-        } else if (isIconColorSet) {
-            applyIconTint(iconTintColor)
+        } else if (isIconTintSet) {
+            applyIconTint(iconAttributes.tint ?: colorAccent)
         }
 
         if(titleAttributes.color == null) {
             if (isTitleAndIconApply) {
-                setTitleColor(colorAccent)
+                val finalColor = if(isHeaderShown) Color.WHITE else colorAccent
+                setTitleColor(finalColor)
             } else {
-                setTitleColor(color)
+                val finalColor = if(isHeaderShown) Color.WHITE else color
+                setTitleColor(finalColor)
             }
         }
         applyTitleAttributes()
@@ -1345,6 +1354,11 @@ constructor(
             }
         }
 
+        if(isHeaderConfiguring && !isHeaderShown){
+            Log.i(TAG, "Header configured with no background image or color")
+            showDebugToast("Set header background image or color")
+        }
+
         return dialog
     }
 
@@ -1382,19 +1396,20 @@ constructor(
             initializeTitle().apply {
                 text = titleAttributes.text
                 textSize = titleAttributes.size
-                setTextColor(titleAttributes.color ?: colorAccent)
                 titleAttributes.letterSpacing?.let { letterSpacing = it }
                 setTypeface(titleAttributes.typeface, titleAttributes.typefaceStyle)
                 if(isHeaderShown) {
-                    titleAttributes.animation?.let { animation ->
-                        clearAnimation()
-                        startAnimation(animation)
+                    titleAttributes.let {
+                        it.animation?.let { animation ->
+                            clearAnimation()
+                            startAnimation(animation)
+                        }
+                        if(it.overrideHeaderColor == true){
+                            setTextColor(titleAttributes.color ?: colorAccent)
+                        }
                     }
-
-                    //
-                    if(titleAttributes.overrideHeaderColor == true){
-                        setTextColor(titleAttributes.color ?: colorAccent)
-                    }
+                } else {
+                    setTextColor(titleAttributes.color ?: colorAccent)
                 }
             }
         }
@@ -1404,14 +1419,14 @@ constructor(
         if (isAccentColorSet) {
             applyAccentColor()
         } else {
-//            if (!isHeaderShown) {
-//                applyTitleProperties()
-//            }
-            if (!isIconColorSet && isIconTintEnabled) {
-                applyIconTint(colorAccent)
-            } else if (isIconColorSet) {
-                applyIconTint(iconTintColor)
+            val isIconTintSet = iconAttributes.tint != null
+            if (!isIconTintSet && isIconTintEnabled) {
+                val finalColor = if(isHeaderShown) Color.WHITE else colorAccent
+                applyIconTint(finalColor)
+            } else if (isIconTintSet) {
+                applyIconTint(iconAttributes.tint ?: colorAccent)
             }
+
             if (!isActionTextAppearanceSet) {
                 if(isActionTextColorSet)
                     applyActionTextColor()
@@ -1512,11 +1527,6 @@ constructor(
         } catch (e: Exception){ 0 }
     }
 
-    private fun prepareHeader() {
-        isHeaderShown = true
-        headerLayout.isVisible = true
-    }
-
     private var isCornerRadiusSet = false
     private var isDefaultCornersEnabled = true
 
@@ -1599,16 +1609,6 @@ constructor(
         override fun onDismiss(){}
     }
 
-    interface OnConfigurationChangeListener {
-        fun onConfigurationChange(config: Configuration?)
-    }
-
-    private var onConfigurationChangeListener: OnConfigurationChangeListener? = null
-    fun setOnConfigurationChangeListener(onConfigurationChangeListener: OnConfigurationChangeListener?): PrimeDialog {
-        this.onConfigurationChangeListener = onConfigurationChangeListener
-        return this
-    }
-
     private val isNightModeActive: Boolean
         get() {
             val configuration = context.resources.configuration
@@ -1621,10 +1621,6 @@ constructor(
     }
 
     companion object {
-        private var isCustomView: Boolean = false
-        private var isHeaderShown: Boolean = false
-        var DEFAULT_THEME: Int = R.style.DefaultDialogTheme
-
         /** No accent color is applied on icon, title and action buttons. */
         @JvmField
         var ACCENT_MODE_NONE: Int = 0

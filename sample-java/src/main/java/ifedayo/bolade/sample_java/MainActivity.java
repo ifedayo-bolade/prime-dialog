@@ -148,10 +148,9 @@ public class MainActivity extends AppCompatActivity {
     void demoHeaderDialog() {
         new PrimeDialog(this)
                 .setTitle("HEY THERE!").setCancelable(false)
-                .setTitleColor(Color.RED)
                 .setDialogWidth(95)
                 .setHeaderBackgroundRes(R.drawable.header)
-                .setHeaderOverlayTintDepth("a9")
+                .setHeaderOverlayTintDepth("65")
                 .setHeaderHeight(86).setIcon(R.drawable.ic_info)
                 .setMessage("Hi there,\nI'm PrimeDialog with Header support. An image resource, bitmap or a solid color can be used as header background.\n\nBy the way, 'Don't show again' could be a handy feature for you.")
                 .setMessageTypefaceRes(R.font.maitree_medium)
@@ -171,8 +170,10 @@ public class MainActivity extends AppCompatActivity {
         new PrimeDialog(this)
                 .setWindowAnimation(R.style.MyDialogAnimationStyle)
                 .setHeaderBackgroundRes(R.drawable.header, true)
-                .setIcon(R.drawable.ic_info).setTitle("HEY THERE!")
-                .setMessage("Hi there,\nI got my custom ENTER and EXIT animation from a style resource.")
+                .setHeaderOverlayTintDepth("45")
+                .setIcon(R.mipmap.ic_launcher).setIconTintEnabled(false)
+                .setTitle("HEY THERE!")
+                .setMessage("Hi there,\nI'm animated dialog, and I got my custom ENTER and EXIT animation from a style resource.")
                 .setMessageTypeface(typeface)
                 .setNegativeButton("DISMISS")
                 .show();
@@ -182,8 +183,8 @@ public class MainActivity extends AppCompatActivity {
         new PrimeDialog(this)
                 .setHeaderBackgroundRes(R.drawable.header)
                 .setIcon(R.drawable.ic_info).setTitle("HEY THERE!")
-                .setMessage("This dialog is styled with an IN/OUT animation")
-                .setMessageLineSpacing(6F)
+                .setMessage("Hi there,\n\nJust letting you know I have my ears to the ground for your clicks and interactions.")
+                .setMessageLineSpacing(4F)
                 .setNegativeButton("CLICK ME", dialog -> {
                     // dialog.dismiss();
                     showMessage("You clicked me!");
@@ -214,10 +215,11 @@ public class MainActivity extends AppCompatActivity {
                     });
                 })
 
-                .setWindowAnimationEnabled(false) // Optional
-                .removeRoundedCorners() // Optional
                 .setDialogWidth(100) // Optional
                 .setDialogHeight(100, true) // Optional
+                .setScreenDimLevel(0.0f) // Optional
+                .setWindowAnimationEnabled(false) // Optional
+                .removeRoundedCorners() // Optional
 
                 .show();
     }
