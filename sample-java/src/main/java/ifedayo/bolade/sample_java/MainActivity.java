@@ -1,0 +1,224 @@
+package ifedayo.bolade.sample_java;
+
+import android.graphics.Color;
+import android.graphics.Typeface;
+import android.os.Bundle;
+import android.widget.Toast;
+
+import androidx.activity.EdgeToEdge;
+import androidx.activity.OnBackPressedCallback;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.res.ResourcesCompat;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+import androidx.recyclerview.widget.RecyclerView;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+
+import ifedayo.bolade.primedialog.PrimeDialog;
+
+public class MainActivity extends AppCompatActivity {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        EdgeToEdge.enable(this);
+        setContentView(R.layout.activity_main);
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
+        Toolbar toolbar = findViewById(R.id.toolBar);
+        setSupportActionBar(toolbar);
+        getOnBackPressedDispatcher().addCallback(this, onBackPressedCallback);
+
+        String[] strings = new String[]{
+                "Simple Dialog",
+                "Accent-Colored Dialog",
+                "Multi-Colored Dialog",
+                "Dimension Dialog",
+                "Header Dialog",
+                "Animated Dialog",
+                "Listener Dialog",
+        };
+        ArrayList<String> list = new ArrayList<>(Arrays.asList(strings));
+        SampleAdapter adapter = new SampleAdapter(this, list);
+        RecyclerView recyclerView = findViewById(R.id.recyclerView);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setAdapter(adapter);
+    }
+
+    /** A basic dialog sample.
+     * @implNote If your action button is ONLY meant to dismiss the dialog, there is
+     * no need to explicitly set an OnDialogButtonClickListener. Clicking the button
+     * will trigger an automatic dismiss as shown in the 'DISMISS' button of this sample. */
+    void demoSimpleDialog() {
+        new PrimeDialog(this)
+                .setTitle("HELLO WORLD!")
+                .setMessage("I'm PrimeDialog, nice to meet you.")
+                .setNegativeButton("DISMISS")
+                .setPositiveButton("I SEE YOU", dialog -> {
+                    showMessage("I see you too!");
+                    dialog.dismiss();
+                }).show();
+    }
+
+    /** Define a general color for icon, title and action buttons by calling
+     * 'setAccentColor(colorInt)' or 'setAccentColorRes(colorRes)'.
+     *
+     * You can define which of these elements the color gets applied on by setting
+     * 'setAccentColor(colorInt, mode) or 'setAccentColorRes(colorRes, mode)'. */
+    void demoAccentColoredDialog() {
+        new PrimeDialog(this)
+                .setAccentColorRes(R.color.colorGreen)
+                .setCancelable(false).setDialogWidth(92)
+                .setIcon(R.drawable.ic_info).setIconSize(36)
+                .setTitle("HEY THERE!")
+                .setMessage("Accent color applies on icon, title, and action buttons by calling 'setAccentColor()'.\n\nIf accent color is not set, PrimeDialog will default to the 'colorAccent' value in your app theme.\n\nIf 'colorAccent' is undefined in app theme, PrimeDialog will use color WHITE or BLACK depending on your UI mode.")
+                .setMessageTypefaceRes(R.font.maitree_medium)
+                .setPositiveButton("DISMISS")
+                .show();
+    }
+
+    /** By default, icon, title and action buttons inherit their colors from the dialog
+     * accent color.
+     *
+     * However, you can explicitly specify separate colors for these elements as demonstrated
+     * in this example.
+     *
+     * By default, the dialog automatically adapt itself in night or light UI modes.
+     * But you can define your preferred background colors for night and light UI modes as
+     * shown also in this example. */
+    void demoMultiColoredDialog() {
+        new PrimeDialog(this)
+                .setAccentColorRes(R.color.colorCyan).setDialogWidth(92)
+                .setIcon(R.drawable.ic_info).setIconSize(37).setIconTintRes(R.color.colorGreen)
+                .setTitle("HEY THERE!").setTitleColorRes(R.color.colorOrange)
+                .setMessage("Icon, Title and Action Button texts inherits any color you specify with 'setAccentColor()'.\n\nHowever, you can explicitly set individual color for each of these elements as seen here\n\nLikewise you can customise your dialog background color between dark and light UI modes.")
+                .setMessageTypefaceRes(R.font.maitree_medium)
+                .setNeutralButton("GREAT")
+                .setNegativeButton("DISMISS")
+                .setPositiveButton("GOT IT")
+                .setNightBackgroundColor(Color.DKGRAY)
+                .setActionTextColor(PrimeDialog.NEUTRAL_BUTTON, Color.RED)
+                .setActionTextColor(PrimeDialog.NEGATIVE_BUTTON, Color.MAGENTA)
+                .setActionTextColorRes(PrimeDialog.POSITIVE_BUTTON, R.color.colorOrange)
+                .show();
+    }
+
+    /** You could set a precise width and height of the dialog on a screen size
+     * percentage basis by calling
+     * 'setDialogWidth(percentageWidth)'
+     * 'setDialogHeight(percentageHeight)'
+     *
+     * You can also set a maximum attainable height by calling
+     * 'setMaxHeight(percentageHeight)'. This will cause dialog to dynamically increase
+     * its height relative to the displayed content, but halt height increase as soon
+     * as the 'max height' value is reached.
+     *
+     * NOTE: 'setDialogHeight(percentageHeight)' will take priority if called alongside
+     * 'setMaxHeight(percentageHeight)'.
+     * */
+    void demoDimensionDialog() {
+        new PrimeDialog(this)
+                .setDialogWidth(100)
+                .setMaxHeight(20)
+                .setDialogHeight(100)
+
+                .removeRoundedCorners()
+                .setTitle("HEY THERE!")
+                .setMessage("Hello there,\nDo you know you can set dialog exact percentage width and height relative to your device screen?\n\nBy the way, you could also remove the rounded corners if you prefer a rectangular dialog by calling 'removeRoundedCorners()'.")
+                .setMessageTypefaceRes(R.font.maitree_medium)
+                .setPositiveButton("DISMISS")
+                .show();
+    }
+
+    /** A header-supported dialog with adjustable header height and overlay. An image
+     * resource or a solid color could be used has the header background.
+     *
+     * PrimeDialog also provides a "Don't show again" mechanism as demonstrated in
+     * this sample. This functionality is NOT restricted to header dialogs alone.
+     * */
+    void demoHeaderDialog() {
+        new PrimeDialog(this)
+                .setDialogWidth(95)
+                .setHeaderBackgroundRes(R.drawable.header)
+                .setHeaderHeight(86).setIcon(R.drawable.ic_info)
+                .setTitle("HEY THERE!").setCancelable(false)
+                .setMessage("Hi there,\nI'm PrimeDialog with Header support. An image resource, bitmap or a solid color can be used as header background.\n\nBy the way, 'Don't show again' could be a handy feature for you.")
+                .setMessageTypefaceRes(R.font.maitree_medium)
+                .setPositiveButton("DISMISS")
+                .setDontShowAgain(onDontShowAgainListener)
+                .show();
+    }
+
+    /** This dialog gets an ENTER and an EXIT animation from a style resources passed
+     * to the PrimeDialog constructor.
+     *
+     * Header background image ken burns animation can be enabled or disabled by passing
+     * 'true' or 'false' respectively to the second parameter of 'setHeaderBackgroundRes()'.
+     * Default value is 'true' i.e. Animated. */
+    void demoAnimatedDialog() {
+        Typeface typeface = ResourcesCompat.getFont(this, R.font.maitree_medium);
+        new PrimeDialog(this)
+                .setWindowAnimation(R.style.MyDialogAnimationStyle)
+                .setHeaderBackgroundRes(R.drawable.header, true)
+                .setIcon(R.drawable.ic_info).setTitle("HEY THERE!")
+                .setMessage("Hi there,\nI got my custom ENTER and EXIT animation from a style resource.")
+                .setMessageTypeface(typeface)
+                .setNegativeButton("DISMISS")
+                .show();
+    }
+
+    void demoListenerDialog() {
+        new PrimeDialog(this)
+                .setHeaderBackgroundRes(R.drawable.header)
+                .setIcon(R.drawable.ic_info).setTitle("HEY THERE!")
+                .setMessage("This dialog is styled with an IN/OUT animation")
+                .setMessageLineSpacing(6F)
+                .setNegativeButton("CLICK ME", dialog -> {
+                    // dialog.dismiss();
+                    showMessage("You clicked me!");
+                })
+                .setPositiveButton("DISMISS")
+                .setOnDialogShowListener(dialog ->
+                        showMessage("Hello from onDialogShowListener!"))
+                .setOnDialogDismissListener((dialog, buttonId) ->
+                        showMessage("Goodbye world, from PrimeDialog onDialogDismissListener"))
+                .setDontShowAgain("Never show again", onDontShowAgainListener)
+                .show();
+    }
+
+    private final PrimeDialog.OnDontShowAgainListener onDontShowAgainListener = new PrimeDialog.OnDontShowAgainListener() {
+        @Override
+        public void onBoxCheck(boolean isChecked) {
+            showMessage(isChecked ? "Checked" : "Not checked");
+        }
+
+        @Override
+        public void onDismiss() {
+            // This method will ONLY get called IF the 'Don't show again'
+            // checkbox is checked.
+
+            // Write your "Don't show again" logic here. This could be
+            // storing a Shared preference value or some other means.
+            // You check for this value next time you are to show the dialog
+            showMessage("Alright, I won't show again!");
+        }
+    };
+
+    private void showMessage(String message){
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    }
+
+    private final OnBackPressedCallback onBackPressedCallback = new OnBackPressedCallback(true) {
+        @Override
+        public void handleOnBackPressed() {
+            MainActivity.this.finish();
+        }
+    };
+}

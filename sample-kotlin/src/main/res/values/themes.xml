@@ -1,0 +1,15 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Base.Theme.LibDialog" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Customize your light theme here. -->
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <style name="Theme.LibDialog" parent="Base.Theme.LibDialog" />
+
+    <style name="MyDialogTheme" parent="Theme.Material3.DayNight.Dialog.Alert">
+        <item name="android:windowEnterAnimation">@anim/dialog_bottom_to_top</item>
+        <item name="android:windowExitAnimation">@anim/dialog_top_to_bottom</item>
+    </style>
+
+</resources>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="DefaultDialogTheme" parent="Theme.AppCompat.Dialog.Alert">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowIsFloating">true</item>
+    </style>
+
+    <style name="WindowAnimationStyle" parent="DefaultDialogTheme">
+        <item name="android:windowEnterAnimation">@anim/dialog_bottom_to_top</item>
+        <item name="android:windowExitAnimation">@anim/dialog_top_to_bottom</item>
+    </style>
+</resources>
