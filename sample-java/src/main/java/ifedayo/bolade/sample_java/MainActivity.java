@@ -3,6 +3,7 @@ package ifedayo.bolade.sample_java;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -191,9 +192,38 @@ public class MainActivity extends AppCompatActivity {
                 .setOnDialogShowListener(dialog ->
                         showMessage("Hello from onDialogShowListener!"))
                 .setOnDialogDismissListener((dialog, buttonId) ->
-                        showMessage("Goodbye world, from PrimeDialog onDialogDismissListener"))
-                .setDontShowAgain("Never show again", onDontShowAgainListener)
+                        showMessage("Goodbye from onDialogDismissListener"))
+                .setDontShowAgain("Don't remind me again", onDontShowAgainListener)
                 .show();
+    }
+
+    /** Set a custom view from a 'Layout resource' or 'View' to use as
+     * dialog content.
+     * If needed, you could set percentage width and height based
+     * on your need. Both are set to 100 here to achieve fullscreen display. */
+    void demoCustomDialog(){
+        new PrimeDialog(this)
+                .setCustomView(R.layout.custom_dialog_layout)
+                .setOnDialogShowListener(dialog -> {
+                    showLoginGuide();
+
+                    Button loginButton = dialog.findViewById(R.id.btnLogin);
+                    loginButton.setOnClickListener(view -> {
+                        loginButton.setText("HEY, I'M A DUMMY BUTTON");
+                        showMessage("Hello from dummy login button");
+                    });
+                })
+
+                .setWindowAnimationEnabled(false) // Optional
+                .removeRoundedCorners() // Optional
+                .setDialogWidth(100) // Optional
+                .setDialogHeight(100, true) // Optional
+
+                .show();
+    }
+
+    private void showLoginGuide() {
+        showMessage("Please click the login button");
     }
 
     private final PrimeDialog.OnDontShowAgainListener onDontShowAgainListener = new PrimeDialog.OnDontShowAgainListener() {
@@ -207,10 +237,10 @@ public class MainActivity extends AppCompatActivity {
             // This method will ONLY get called IF the 'Don't show again'
             // checkbox is checked.
 
-            // Write your "Don't show again" logic here. This could be
+            // Write your "Don't remind me again" logic here. This could be
             // storing a Shared preference value or some other means.
             // You check for this value next time you are to show the dialog
-            showMessage("Alright, I won't show again!");
+            showMessage("Okay, I won't remind you again");
         }
     };
 

@@ -753,8 +753,7 @@ constructor(
     }
 
     fun setMessageLayoutBackground(@ColorRes colorRes: Int): PrimeDialog {
-        val messageLayout = dialog.findViewById<LinearLayout>(R.id.messageLayout)
-        messageLayout.setBackgroundColor(getColor(colorRes))
+        binding.messageLayout.setBackgroundColor(getColor(colorRes))
         return this
     }
 
@@ -790,8 +789,7 @@ constructor(
     }
 
     fun setDontShowAgainLayoutBackgroundColor(@ColorInt color: Int): PrimeDialog {
-        val linearLayout = dialog.findViewById<LinearLayout>(R.id.dontShowAgainLayout)
-        linearLayout.setBackgroundColor(getColor(color))
+        binding.dontShowAgainLayout.setBackgroundColor(getColor(color))
         return this
     }
 
@@ -1040,8 +1038,7 @@ constructor(
         onDialogDismissListenerSet = true
         dialog.setOnDismissListener {
             onDialogDismissListener.onDialogDismiss(this@PrimeDialog, actionID)
-            val checkBox = findViewById<AppCompatCheckBox>(R.id.checkBox)
-            if (checkBox.isChecked && dontShowAgainSet && onDontShowAgainListener != null) onDontShowAgainListener!!.onDismiss()
+            if (binding.checkBox.isChecked && dontShowAgainSet && onDontShowAgainListener != null) onDontShowAgainListener!!.onDismiss()
         }
         return this
     }
@@ -1308,21 +1305,19 @@ constructor(
 
         val isNightMode = isNightModeActive
         if (dontShowAgainSet) {
-            val linearLayout = findViewById<LinearLayout>(R.id.dontShowAgainLayout)
-            linearLayout.visibility = View.VISIBLE
-            val checkBox = findViewById<AppCompatCheckBox>(R.id.checkBox)
-            checkBox.setOnCheckedChangeListener { _, isChecked ->
-                onDontShowAgainListener?.onBoxCheck(isChecked)
+            binding.dontShowAgainLayout.isVisible = true
+            binding.checkBox.apply {
+                setOnCheckedChangeListener { _, isChecked ->
+                    onDontShowAgainListener?.onBoxCheck(isChecked)
+                }
+                CompoundButtonCompat.setButtonTintList(
+                    this,
+                    ColorStateList.valueOf(colorAccent)
+                )
+                val textColor = if (isNightMode) Color.WHITE else Color.BLACK
+                setTextColor(textColor)
+                text = dontShowLabel
             }
-            CompoundButtonCompat.setButtonTintList(
-                checkBox,
-                ColorStateList.valueOf(colorAccent)
-            )
-            val textColor = if (isNightMode) Color.WHITE else Color.BLACK
-            val textView = findViewById<AppCompatTextView>(R.id.textView)
-            textView.setTextColor(textColor)
-            textView.text = dontShowLabel
-            textView.setOnClickListener { checkBox.toggle() }
         }
 
         prepareAccentColor()
@@ -1445,8 +1440,7 @@ constructor(
         }
         if (!onDialogDismissListenerSet && dontShowAgainSet) {
             dialog.setOnDismissListener {
-                val checkBox = findViewById<AppCompatCheckBox>(R.id.checkBox)
-                if (checkBox.isChecked && onDontShowAgainListener != null) onDontShowAgainListener!!.onDismiss()
+                if (binding.checkBox.isChecked && onDontShowAgainListener != null) onDontShowAgainListener!!.onDismiss()
             }
         }
 

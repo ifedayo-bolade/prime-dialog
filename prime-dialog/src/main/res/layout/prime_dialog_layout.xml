@@ -150,20 +150,14 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="11dp"
-                        tools:checked="true"/>
-
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/textView"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="4dp"
-                        android:layout_marginEnd="14dp"
-                        android:layout_gravity="start|center"
-                        android:gravity="start"
+                        android:layout_marginEnd="11dp"
+                        android:gravity="start|center"
+                        android:layout_gravity="end"
                         android:text="Don't show again"
+                        android:textSize="14.5sp"
                         android:typeface="sans"
-                        android:textSize="15sp"
-                        android:textColor="@android:color/black"/>
+                        android:textColor="@android:color/black"
+                        tools:checked="true"/>
 
                 </LinearLayout>
 
