@@ -60,7 +60,7 @@ import kotlin.run
 import kotlin.text.substring
 
 /**
- * PrimeDialog v1.0.0
+ * PrimeDialog v1.0.1
  * Created by Ifedayo Bolade on May 11, 2026.
  */
 
@@ -1603,28 +1603,34 @@ constructor(
         fun onDialogButtonClick(dialog: PrimeDialog)
     }
 
-    interface OnDialogShowListener {
+    fun interface OnDialogShowListener {
         fun onDialogShow(dialog: PrimeDialog)
     }
 
-    interface OnDialogDismissListener {
+    fun interface OnDialogDismissListener {
         fun onDialogDismiss(dialog: PrimeDialog, buttonId: Int)
     }
 
-    interface OnDialogCancelListener {
+    fun interface OnDialogCancelListener {
         fun onDialogCancel(dialog: PrimeDialog, buttonId: Int)
     }
 
     private var onDontShowAgainListener: OnDontShowAgainListener? = null
 
     /** This listener is meant for 'Don't show again' action. */
-    interface OnDontShowAgainListener {
-        /** Fires whenever the checkbox is toggled. */
+    private interface DontShowAgainListener {
         fun onBoxCheck(isChecked: Boolean)
+        fun onDismiss()
+    }
+
+    /** This listener is meant for 'Don't show again' action. */
+    open class OnDontShowAgainListener : DontShowAgainListener {
+        /** Fires whenever the checkbox is toggled. */
+        override fun onBoxCheck(isChecked: Boolean){}
         /** This method will ONLY get called IF the 'Don't show again' checkbox is checked.
          * @author Write your logic for not showing the dialog again here. This could be
          * storing a Shared preference value or some other means. */
-        fun onDismiss()
+        override fun onDismiss(){}
     }
 
     interface OnConfigurationChangeListener {
