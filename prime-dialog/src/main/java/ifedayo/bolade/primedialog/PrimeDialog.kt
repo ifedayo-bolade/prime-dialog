@@ -28,7 +28,6 @@ import android.view.animation.Interpolator
 import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.RelativeLayout
-import android.widget.ScrollView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.AnimRes
@@ -51,8 +50,7 @@ import androidx.core.widget.ImageViewCompat
 import kotlin.properties.Delegates
 import androidx.core.graphics.toColorInt
 import androidx.core.view.isVisible
-import com.flaviofaria.kenburnsview.KenBurnsView
-import kotlin.also
+import ifedayo.bolade.primedialog.databinding.PrimeDialogLayoutBinding
 import kotlin.apply
 import kotlin.let
 import kotlin.ranges.until
@@ -71,7 +69,6 @@ constructor(
     private var context: Context,
     styleRes: Int = R.style.DefaultDialogTheme
 ) {
-
     private var actionID = CLICK_OUTSIDE
     private var cornerRadius = 16
     private var dialogPadding = 0
@@ -80,19 +77,20 @@ constructor(
     private var isIconColorSet = false
     private var dontShowAgainSet = false
     private val dialog: Dialog
-    private var headerLayout: RelativeLayout? = null
-    private var overlay: RelativeLayout? = null
-    private var frameLayout: FrameLayout? = null
+    private var headerLayout: RelativeLayout
+    private var overlay: RelativeLayout
+    private var frameLayout: FrameLayout
     private var customView: ViewGroup? = null
     private var titleIcon: AppCompatImageView? = null
     private var title: AppCompatTextView? = null
-    private var message: AppCompatTextView? = null
+    private var message: AppCompatTextView
     private var positiveButtonTextView: AppCompatTextView? = null
     private var negativeButtonTextView: AppCompatTextView? = null
     private var neutralButtonTextView: AppCompatTextView? = null
     private var positiveButtonLayout: LinearLayout? = null
     private var negativeButtonLayout: LinearLayout? = null
     private var neutralButtonLayout: LinearLayout? = null
+    private var binding: PrimeDialogLayoutBinding
     private var windowAnimationStyleRes = R.style.WindowAnimationStyle
 
     private var iconAttributes: IconAttributes = IconAttributes()
@@ -119,16 +117,25 @@ constructor(
         var typefaceStyle: Int = Typeface.NORMAL,
         var isTitleSet: Boolean = false,
         var letterSpacing: Float? = null,
-        var animation: Animation? = null
+        var animation: Animation? = null,
+        var overrideHeaderColor: Boolean? = null
     )
 
     init {
         isCustomView = false
         isHeaderShown = false
+        val layoutInflater = LayoutInflater.from(context)
+        binding = PrimeDialogLayoutBinding.inflate(layoutInflater)
         dialog = Dialog(context, styleRes)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog.setContentView(R.layout.prime_dialog_layout)
+        dialog.setContentView(binding.root)
         setWindowAnimationEnabled(true)
+
+        // Initialize views
+        headerLayout = binding.header
+        overlay = binding.overlay
+        frameLayout = binding.frameLayout
+        message = binding.dialogMessage
     }
 
     private var isTransparencySet = false
@@ -139,9 +146,6 @@ constructor(
         return this
     }
 
-    private val actionLayoutID: Int
-        get() = if (isCustomView) R.id.actionLayout2 else R.id.actionLayout1
-
     @JvmOverloads
     /**
      * Sets the view to be displayed as the dialog's content.
@@ -150,8 +154,7 @@ constructor(
      */
     fun setCustomView(view: View, layoutParams: FrameLayout.LayoutParams? = null): PrimeDialog {
         isCustomView = true
-        frameLayout = findViewById<FrameLayout>(R.id.frameLayout)
-        frameLayout?.addView(view)
+        frameLayout.addView(view)
         layoutParams?.let { view.layoutParams = it }
         customView = frameLayout
         return this
@@ -166,8 +169,7 @@ constructor(
         val layoutInflater =
             context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         customView = layoutInflater.inflate(layoutRes, null) as ViewGroup
-        frameLayout = findViewById<FrameLayout>(R.id.frameLayout)
-        frameLayout?.addView(customView)
+        frameLayout.addView(customView)
         return this
     }
 
@@ -188,13 +190,12 @@ constructor(
         val layoutInflater =
             context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         val layoutView = layoutInflater.inflate(layoutRes, null)
-        frameLayout = findViewById<FrameLayout>(R.id.frameLayout)
-        frameLayout?.addView(layoutView)
+        frameLayout.addView(layoutView)
         if (titleTextViewIdRes != 0) {
-            title = frameLayout?.findViewById(titleTextViewIdRes)
+            title = frameLayout.findViewById(titleTextViewIdRes)
         }
         if (messageTextViewIdRes != 0) {
-            message = frameLayout?.findViewById(messageTextViewIdRes)
+            message = frameLayout.findViewById(messageTextViewIdRes)
         }
         return this
     }
@@ -232,15 +233,17 @@ constructor(
         @DrawableRes drawableRes: Int,
         isAnimated: Boolean = true
     ): PrimeDialog {
-        initializeHeader()
+        prepareHeader()
         if(isAnimated){
-            val kenBurnsView = findViewById<KenBurnsView>(R.id.kenBurnsView)
-            kenBurnsView.setImageResource(drawableRes)
-            kenBurnsView.isVisible = true
+            binding.kenBurnsView.apply {
+                setImageResource(drawableRes)
+                isVisible = true
+            }
         } else {
-            val headerImageView = findViewById<AppCompatImageView>(R.id.imageView1)
-            headerImageView.setImageResource(drawableRes)
-            headerImageView.isVisible = true
+            binding.imageView1.apply {
+                setImageResource(drawableRes)
+                isVisible = true
+            }
         }
         return this
     }
@@ -251,14 +254,12 @@ constructor(
      * @see [setHeaderBackgroundRes]*/
     fun setHeaderBackgroundColor(@ColorRes colorRes: Int): PrimeDialog {
         isHeaderShown = true
-        headerLayout = findViewById<RelativeLayout>(R.id.header).apply {
+        headerLayout.apply {
             isVisible = true
             setBackgroundColor(getColor(colorRes))
         }
-        val kenBurnsView = findViewById<KenBurnsView>(R.id.kenBurnsView)
-        kenBurnsView.isVisible = false
-        val headerImageView = findViewById<AppCompatImageView>(R.id.imageView1)
-        headerImageView.isVisible = false
+        binding.kenBurnsView.isVisible = false
+        binding.imageView1.isVisible = false
         return this
     }
 
@@ -268,8 +269,8 @@ constructor(
      * @param heightDp The desired height in dp
      */
     fun setHeaderHeight(heightDp: Int): PrimeDialog {
-        initializeHeader()
-        val layoutParams = headerLayout!!.layoutParams as RelativeLayout.LayoutParams
+        prepareHeader()
+        val layoutParams = headerLayout.layoutParams as RelativeLayout.LayoutParams
         layoutParams.height = toDP(heightDp)
         return this
     }
@@ -389,37 +390,29 @@ constructor(
     }
 
     private fun setHeaderOverlayEnabled() {
-        if (headerLayout != null) {
-            isHeaderShown = true
-            headerLayout!!.visibility = View.VISIBLE
-            overlay = findViewById<RelativeLayout>(R.id.overlay)
-            overlay!!.visibility = View.VISIBLE
-        }
+        prepareHeader()
+        overlay.isVisible = true
     }
 
     /** Sets the header overlay transparency.
      * @param alphaValue The opacity value ranging from 00 (Fully transparent) to FF (Fully opaque)
      */
     fun setHeaderOverlayTintDepth(alphaValue: String): PrimeDialog {
-        if (headerLayout != null) {
-            if (alphaValue.length > 2) {
-                val message = "'setHeaderOverlayTintDepth' - Alpha value should be two characters long"
-                Log.i(TAG, message)
-                showDebugToast(message)
-                return this
-            }
-            setHeaderOverlayEnabled()
-            val color = "#" + alphaValue + "000000"
-            overlay!!.setBackgroundColor(color.toColorInt())
+        if (alphaValue.length > 2) {
+            val message = "'setHeaderOverlayTintDepth' - Alpha value should be two characters long"
+            Log.i(TAG, message)
+            showDebugToast(message)
+            return this
         }
+        setHeaderOverlayEnabled()
+        val color = "#" + alphaValue + "000000"
+        overlay.setBackgroundColor(color.toColorInt())
         return this
     }
 
     private fun setHeaderOverlayTint(@ColorInt color: Int): PrimeDialog {
-        if (headerLayout != null) {
-            setHeaderOverlayEnabled()
-            overlay!!.setBackgroundColor(color)
-        }
+        setHeaderOverlayEnabled()
+        overlay.setBackgroundColor(color)
         return this
     }
 
@@ -432,25 +425,24 @@ constructor(
     }
 
     private fun initializeTitle(isVisible: Boolean = true): AppCompatTextView {
-        if (isHeaderShown) {
-            title = findViewById<AppCompatTextView>(R.id.dialog_title)
-            title!!.setTextColor(Color.WHITE)
-            title!!.setTypeface(TYPEFACE_SANS_SERIF_MEDIUM_BOLD)
+        if(isHeaderShown){
+            title = binding.dialogTitle
+            titleAttributes.color = Color.WHITE
         } else {
-            title = findViewById<AppCompatTextView>(R.id.dialog_title_2)
-            title!!.visibility = if(isVisible) View.VISIBLE else View.GONE
-//            title.setTypeface(Typeface.SANS_SERIF, Typeface.BOLD)
-            title!!.typeface = TYPEFACE_SANS_SERIF_MEDIUM_BOLD
-            val titleLayout = findViewById<LinearLayout>(R.id.title_layout)
-            titleLayout.visibility = if(isVisible) View.VISIBLE else View.GONE
-
-            // Adjust message scrollview depending on whether title is shown or not.
-            val scrollView = findViewById<ScrollView>(R.id.scrollView)
-            scrollView.setPadding(0,toDP(if(isVisible) 0 else 8),0, 0)
-
-            val layoutParams = titleLayout.layoutParams as RelativeLayout.LayoutParams
-            layoutParams.setMargins(toDP(17), toDP(12), toDP(17), toDP(2))
+            title = binding.dialogTitle2.apply {
+                this.isVisible = isVisible
+                binding.titleLayout.let {
+                    it.isVisible = isVisible
+                    val layoutParams = it.layoutParams as RelativeLayout.LayoutParams
+                    layoutParams.setMargins(toDP(17), toDP(12), toDP(17), toDP(2))
+                }
+                // Adjust message scrollview depending on whether title is shown or not.
+                binding.scrollView.setPadding(
+                    0,toDP(if(isVisible) 0 else 8),0, 0
+                )
+            }
         }
+        titleAttributes.typeface = TYPEFACE_SANS_SERIF_MEDIUM_BOLD
         return title as AppCompatTextView
     }
 
@@ -486,6 +478,7 @@ constructor(
 
     fun setTitleColor(@ColorInt color: Int): PrimeDialog {
         titleAttributes.color = getColor(color)
+        titleAttributes.overrideHeaderColor = true
         return this
     }
 
@@ -519,18 +512,15 @@ constructor(
     }
 
     fun setMessage(charSequence: CharSequence?): PrimeDialog {
-        if (message == null) {
-            message = findViewById<AppCompatTextView>(R.id.dialog_message)
-            setMessageMargin()
-        }
-        message!!.text = charSequence
+        setMessageMargin()
+        message.text = charSequence
         return this
     }
 
     /** Sets message textview size. Default value is 18sp
      * @param sizeSp The desired size value in sp.*/
     fun setMessageSize(sizeSp: Float): PrimeDialog {
-        message?.textSize = sizeSp
+        message.textSize = sizeSp
         return this
     }
 
@@ -538,7 +528,7 @@ constructor(
     fun setMessageColor(@ColorInt color: Int): PrimeDialog {
         if(!isMessageColorSet){
             isMessageColorSet = true
-            message?.setTextColor(getColor(color))
+            message.setTextColor(getColor(color))
         }
         return this
     }
@@ -552,7 +542,7 @@ constructor(
     }
 
     fun setMessageTypeface(typeface: Typeface?): PrimeDialog {
-        message?.typeface = typeface
+        message.typeface = typeface
         return this
     }
 
@@ -567,7 +557,7 @@ constructor(
      * @param multiplier Multiplier value. Default is 1.0F
      */
     fun setMessageLineSpacing(add: Float, multiplier: Float = 1.0F): PrimeDialog {
-        message?.setLineSpacing(
+        message.setLineSpacing(
             TypedValue.applyDimension(
                 TypedValue.COMPLEX_UNIT_DIP,
                 add,
@@ -583,13 +573,11 @@ constructor(
 
     fun setMargin(left: Int = 0, top: Int = 0, right: Int = 0, bottom: Int = 0): PrimeDialog {
         if(isCustomView) {
-            val layoutParams = frameLayout!!.layoutParams as RelativeLayout.LayoutParams
-            layoutParams.setMargins(toDP(left), toDP(top), toDP(right), toDP(bottom))
+            val layoutParams = frameLayout.layoutParams as? RelativeLayout.LayoutParams
+            layoutParams?.setMargins(toDP(left), toDP(top), toDP(right), toDP(bottom))
         } else {
-            if (message != null) {
-                val layoutParams = message!!.layoutParams as RelativeLayout.LayoutParams
-                layoutParams.setMargins(toDP(left), toDP(top), toDP(right), toDP(bottom))
-            }
+            val layoutParams = message.layoutParams as? RelativeLayout.LayoutParams
+            layoutParams?.setMargins(toDP(left), toDP(top), toDP(right), toDP(bottom))
         }
         return this
     }
@@ -736,14 +724,12 @@ constructor(
      */
     fun setMessageMargin(left: Int = 16, top: Int = 0, right: Int = 16, bottom: Int = 0): PrimeDialog {
         if (isCustomView) {
-            val linearLayout = frameLayout!!.getChildAt(0) as LinearLayout
-            val layoutParams = linearLayout.layoutParams as RelativeLayout.LayoutParams
-            layoutParams.setMargins(toDP(left), toDP(top), toDP(right), toDP(bottom))
+            val linearLayout = frameLayout.getChildAt(0) as? LinearLayout
+            val layoutParams = linearLayout?.layoutParams as? RelativeLayout.LayoutParams
+            layoutParams?.setMargins(toDP(left), toDP(top), toDP(right), toDP(bottom))
         } else {
-            if (message != null) {
-                val layoutParams = message!!.layoutParams as RelativeLayout.LayoutParams
-                layoutParams.setMargins(toDP(left), toDP(top), toDP(right), toDP(bottom))
-            }
+            val layoutParams = message.layoutParams as? RelativeLayout.LayoutParams
+            layoutParams?.setMargins(toDP(left), toDP(top), toDP(right), toDP(bottom))
         }
         return this
     }
@@ -789,7 +775,7 @@ constructor(
 
     private fun setInternalActionLayoutBackgroundColor(@ColorInt color: Int): PrimeDialog {
         if (!isActionLayoutBackgroundColorSet) {
-            val actionLayout = dialog.findViewById<RelativeLayout>(actionLayoutID)
+            val actionLayout = if(isCustomView) binding.actionLayout2 else binding.actionLayout1
             actionLayout.setBackgroundColor(getColor(color))
         }
         return this
@@ -809,9 +795,8 @@ constructor(
         return this
     }
 
-    private val defaultOnClickListener = OnDialogButtonClickListener { _ ->
-        dismiss()
-    }
+    private val defaultOnClickListener =
+        OnDialogButtonClickListener { dialog -> dialog.dismiss() }
 
     @JvmOverloads
     fun setPositiveButton(
@@ -829,11 +814,9 @@ constructor(
         updateActionLayoutVisibility()
         POSITIVE_BUTTON =
             if (isCustomView) R.id.dialog_btn_positive_layout2 else R.id.dialog_btn_positive_layout1
-        POSITIVE_BUTTON_TEXTVIEW =
-            if (isCustomView) R.id.dialog_btn_positive_textview2 else R.id.dialog_btn_positive_textview1
         positiveButtonLayout = findViewById<LinearLayout>(POSITIVE_BUTTON).apply {
-            visibility = View.VISIBLE
-            positiveButtonTextView = (getChildAt(0) as AppCompatTextView).apply {
+            isVisible = true
+            positiveButtonTextView = (getChildAt(0) as? AppCompatTextView)?.apply {
                 text = label
                 setTypeface(Typeface.DEFAULT_BOLD)
             }
@@ -861,11 +844,9 @@ constructor(
         updateActionLayoutVisibility()
         NEGATIVE_BUTTON =
             if (isCustomView) R.id.dialog_btn_negative_layout2 else R.id.dialog_btn_negative_layout1
-        NEGATIVE_BUTTON_TEXTVIEW =
-            if (isCustomView) R.id.dialog_btn_negative_textview2 else R.id.dialog_btn_negative_textview1
         negativeButtonLayout = findViewById<LinearLayout>(NEGATIVE_BUTTON).apply {
-            visibility = View.VISIBLE
-            negativeButtonTextView = (getChildAt(0) as AppCompatTextView).apply {
+            isVisible = true
+            negativeButtonTextView = (getChildAt(0) as? AppCompatTextView)?.apply {
                 text = label
                 setTypeface(Typeface.DEFAULT_BOLD)
             }
@@ -893,11 +874,9 @@ constructor(
         updateActionLayoutVisibility()
         NEUTRAL_BUTTON =
             if (isCustomView) R.id.dialog_btn_neutral_layout2 else R.id.dialog_btn_neutral_layout1
-        NEUTRAL_BUTTON_TEXTVIEW =
-            if (isCustomView) R.id.dialog_btn_neutral_textview2 else R.id.dialog_btn_neutral_textview1
         neutralButtonLayout = findViewById<LinearLayout>(NEUTRAL_BUTTON).apply {
-            visibility = View.VISIBLE
-            neutralButtonTextView = (getChildAt(0) as AppCompatTextView).apply {
+            isVisible = true
+            neutralButtonTextView = (getChildAt(0) as? AppCompatTextView)?.apply {
                 text = label
                 setTypeface(Typeface.DEFAULT_BOLD)
             }
@@ -995,35 +974,31 @@ constructor(
     }
 
     private fun applyActionTextColor(){
-        val ids = mutableListOf(
-            POSITIVE_BUTTON, POSITIVE_BUTTON_TEXTVIEW,
-            NEGATIVE_BUTTON, NEGATIVE_BUTTON_TEXTVIEW,
-            NEUTRAL_BUTTON, NEUTRAL_BUTTON_TEXTVIEW
-        )
+        val ids = mutableListOf(POSITIVE_BUTTON, NEGATIVE_BUTTON, NEUTRAL_BUTTON)
         actionTextColorMap.forEach { (buttonId, textColor) ->
             when(buttonId){
-               POSITIVE_BUTTON, POSITIVE_BUTTON_TEXTVIEW -> {
+               POSITIVE_BUTTON -> {
                    applySingleActionTextColor(positiveButtonTextView, textColor)
-                   ids.removeAll(listOf(POSITIVE_BUTTON, POSITIVE_BUTTON_TEXTVIEW))
+                   ids.remove(POSITIVE_BUTTON)
                }
-               NEGATIVE_BUTTON, NEGATIVE_BUTTON_TEXTVIEW -> {
+               NEGATIVE_BUTTON -> {
                    applySingleActionTextColor(negativeButtonTextView, textColor)
-                   ids.removeAll(listOf(NEGATIVE_BUTTON, NEGATIVE_BUTTON_TEXTVIEW))
+                   ids.remove(NEGATIVE_BUTTON)
                }
-               NEUTRAL_BUTTON, NEUTRAL_BUTTON_TEXTVIEW -> {
+               NEUTRAL_BUTTON -> {
                    applySingleActionTextColor(neutralButtonTextView, textColor)
-                   ids.removeAll(listOf(NEUTRAL_BUTTON, NEUTRAL_BUTTON_TEXTVIEW))
+                   ids.remove(NEUTRAL_BUTTON)
                }
             }
         }
 
         for(id in ids){
             when(id){
-                POSITIVE_BUTTON, POSITIVE_BUTTON_TEXTVIEW ->
+                POSITIVE_BUTTON ->
                     applySingleActionTextColor(positiveButtonTextView, colorAccent)
-                NEGATIVE_BUTTON, NEGATIVE_BUTTON_TEXTVIEW ->
+                NEGATIVE_BUTTON ->
                     applySingleActionTextColor(negativeButtonTextView, colorAccent)
-                NEUTRAL_BUTTON, NEUTRAL_BUTTON_TEXTVIEW ->
+                NEUTRAL_BUTTON ->
                     applySingleActionTextColor(neutralButtonTextView, colorAccent)
             }
         }
@@ -1248,8 +1223,7 @@ constructor(
      * @param color The id of color to be used on dialog background.
      */
     fun setBackgroundColor(@ColorInt color: Int): PrimeDialog {
-        frameLayout = findViewById<FrameLayout>(R.id.frameLayout)
-        frameLayout!!.setBackgroundColor(color)
+        frameLayout.setBackgroundColor(color)
         setInternalActionLayoutBackgroundColor(color)
         dayColor = if (isTransparencySet) Color.TRANSPARENT else color
         nightColor = if (isTransparencySet) Color.TRANSPARENT else color
@@ -1298,26 +1272,20 @@ constructor(
         return this
     }
 
-    val titleTextView: AppCompatTextView
-        get() = title ?: findViewById<AppCompatTextView>(R.id.dialog_title).also { title = it }
-
-    val messageTextView: AppCompatTextView
-        get() = message ?: findViewById<AppCompatTextView>(R.id.dialog_message).also { message = it }
-
-    fun getButtonLayout(buttonLayoutID: Int): LinearLayout {
-        return findViewById(buttonLayoutID)
+    fun getActionButtonLayout(buttonId: Int): LinearLayout {
+        return when(buttonId){
+            NEGATIVE_BUTTON -> if(isCustomView) binding.dialogBtnNegativeLayout2 else binding.dialogBtnNegativeLayout1
+            NEUTRAL_BUTTON -> if(isCustomView) binding.dialogBtnNeutralLayout2 else binding.dialogBtnNeutralLayout1
+            else -> if(isCustomView) binding.dialogBtnPositiveLayout2 else binding.dialogBtnPositiveLayout1
+        }
     }
 
-    fun getButtonTextView(buttonTextViewID: Int): AppCompatTextView? {
-        return findViewById(buttonTextViewID)
-    }
-
-    fun setButtonTextViewColor(buttonTextViewID: Int, @ColorRes colorRes: Int) {
-        getButtonTextView(buttonTextViewID)?.setTextColor(getColor(colorRes))
-        applySingleActionTextColor(
-            findViewById<AppCompatTextView>(buttonTextViewID),
-            getColor(colorRes)
-        )
+    fun getActionButtonTextView(buttonId: Int): AppCompatTextView {
+        return when(buttonId){
+            NEGATIVE_BUTTON -> if(isCustomView) binding.dialogBtnNegativeTextview2 else binding.dialogBtnNegativeTextview1
+            NEUTRAL_BUTTON -> if(isCustomView) binding.dialogBtnNeutralTextview2 else binding.dialogBtnNeutralTextview1
+            else -> if(isCustomView) binding.dialogBtnPositiveTextview2 else binding.dialogBtnPositiveTextview1
+        }
     }
 
     fun <T : View?> findViewById(@IdRes viewID: Int): T {
@@ -1327,9 +1295,10 @@ constructor(
         return default
     }
 
-    val isShowing: Boolean
-        get() = dialog.isShowing
+    val isShowing: Boolean = dialog.isShowing
 
+    /** Commands a build of the dialog with all specified parameters.
+     * @return A dialog instance with all defined parameters applied. */
     fun getDialog(): Dialog {
         applyIconAttributes()
         applyTitleAttributes()
@@ -1342,7 +1311,7 @@ constructor(
             val linearLayout = findViewById<LinearLayout>(R.id.dontShowAgainLayout)
             linearLayout.visibility = View.VISIBLE
             val checkBox = findViewById<AppCompatCheckBox>(R.id.checkBox)
-            checkBox.setOnCheckedChangeListener { checkBox, isChecked ->
+            checkBox.setOnCheckedChangeListener { _, isChecked ->
                 onDontShowAgainListener?.onBoxCheck(isChecked)
             }
             CompoundButtonCompat.setButtonTintList(
@@ -1421,10 +1390,15 @@ constructor(
                 setTextColor(titleAttributes.color ?: colorAccent)
                 titleAttributes.letterSpacing?.let { letterSpacing = it }
                 setTypeface(titleAttributes.typeface, titleAttributes.typefaceStyle)
-                if (isHeaderShown) {
+                if(isHeaderShown) {
                     titleAttributes.animation?.let { animation ->
                         clearAnimation()
                         startAnimation(animation)
+                    }
+
+                    //
+                    if(titleAttributes.overrideHeaderColor == true){
+                        setTextColor(titleAttributes.color ?: colorAccent)
                     }
                 }
             }
@@ -1506,18 +1480,19 @@ constructor(
         dialog.dismiss()
     }
 
-    fun performClick(buttonLayoutID: Int) {
-        getButtonLayout(buttonLayoutID).performClick()
+    /** Execute an indirect action button click by passing the button id
+     * to this function. Button id could be one of [POSITIVE_BUTTON],
+     * [NEGATIVE_BUTTON] or [NEUTRAL_BUTTON]
+     * @param buttonId The id of the target action button. */
+    fun performActionClick(buttonId: Int) {
+        getActionButtonLayout(buttonId).performClick()
     }
 
-    val actionLayoutView: View
-        get() = dialog.findViewById(actionLayoutID)
-
     private fun updateActionLayoutVisibility() {
-        val normal = dialog.findViewById<RelativeLayout>(R.id.actionLayout1)
-        val custom = dialog.findViewById<RelativeLayout>(R.id.actionLayout2)
-        normal.visibility = if (isCustomView) View.GONE else View.VISIBLE
-        custom.visibility = if (isCustomView) View.VISIBLE else View.GONE
+        with(binding){
+            actionLayout1.isVisible = !isCustomView
+            actionLayout2.isVisible = isCustomView
+        }
     }
 
     private fun dpToPx(dp: Int): Int {
@@ -1543,12 +1518,9 @@ constructor(
         } catch (e: Exception){ 0 }
     }
 
-    private fun initializeHeader() {
-        if (headerLayout == null) {
-            isHeaderShown = true
-            headerLayout = findViewById<RelativeLayout>(R.id.header)
-            headerLayout!!.visibility = View.VISIBLE
-        }
+    private fun prepareHeader() {
+        isHeaderShown = true
+        headerLayout.isVisible = true
     }
 
     private var isCornerRadiusSet = false
@@ -1687,12 +1659,6 @@ constructor(
         var NEGATIVE_BUTTON: Int = 0
         @JvmField /** Neutral action button layout id*/
         var NEUTRAL_BUTTON: Int = 0
-        @JvmField /** Positive action button textview id*/
-        var POSITIVE_BUTTON_TEXTVIEW: Int = 0
-        @JvmField /** Negative action button textview id*/
-        var NEGATIVE_BUTTON_TEXTVIEW: Int = 0
-        @JvmField /** Neutral action button textview id*/
-        var NEUTRAL_BUTTON_TEXTVIEW: Int = 0
         val TYPEFACE_SERIF_BOLD = Typeface.create("serif", Typeface.BOLD)
         val TYPEFACE_SERIF_NORMAL = Typeface.create("serif", Typeface.NORMAL)
         val TYPEFACE_SERIF_MONOSPACE = Typeface.create("serif-monospace", Typeface.BOLD)

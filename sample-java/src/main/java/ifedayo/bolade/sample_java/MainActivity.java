@@ -44,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
                 "Header Dialog",
                 "Animated Dialog",
                 "Listener Dialog",
+                "Custom View Dialog",
         };
         ArrayList<String> list = new ArrayList<>(Arrays.asList(strings));
         SampleAdapter adapter = new SampleAdapter(this, list);
@@ -145,10 +146,12 @@ public class MainActivity extends AppCompatActivity {
      * */
     void demoHeaderDialog() {
         new PrimeDialog(this)
+                .setTitle("HEY THERE!").setCancelable(false)
+                .setTitleColor(Color.RED)
                 .setDialogWidth(95)
                 .setHeaderBackgroundRes(R.drawable.header)
+                .setHeaderOverlayTintDepth("a9")
                 .setHeaderHeight(86).setIcon(R.drawable.ic_info)
-                .setTitle("HEY THERE!").setCancelable(false)
                 .setMessage("Hi there,\nI'm PrimeDialog with Header support. An image resource, bitmap or a solid color can be used as header background.\n\nBy the way, 'Don't show again' could be a handy feature for you.")
                 .setMessageTypefaceRes(R.font.maitree_medium)
                 .setPositiveButton("DISMISS")

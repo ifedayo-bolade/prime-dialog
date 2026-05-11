@@ -25,6 +25,7 @@ android {
     }
     buildFeatures {
         buildConfig = true
+        viewBinding = true
     }
 
     publishing {
@@ -39,7 +40,7 @@ publishing {
         register<MavenPublication>("release") {
             groupId = "com.github.ifedayo-bolade"
             artifactId = "prime-dialog"
-            version = "1.0.0"
+            version = "1.0.1"
 
             afterEvaluate {
                 from(components["release"])
