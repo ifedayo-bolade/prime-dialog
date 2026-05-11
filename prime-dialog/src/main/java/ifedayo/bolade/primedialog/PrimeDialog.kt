@@ -127,7 +127,7 @@ constructor(
         isHeaderShown = false
         dialog = Dialog(context, styleRes)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog.setContentView(R.layout.dialog_builder_layout)
+        dialog.setContentView(R.layout.prime_dialog_layout)
         setWindowAnimationEnabled(true)
     }
 
