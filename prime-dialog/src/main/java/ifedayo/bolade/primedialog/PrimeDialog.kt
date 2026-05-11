@@ -1658,18 +1658,23 @@ constructor(
         private var isCustomView: Boolean = false
         private var isHeaderShown: Boolean = false
         var DEFAULT_THEME: Int = R.style.DefaultDialogTheme
+
+        /** No accent color is applied on icon, title and action buttons. */
         @JvmField
-                /** No accent color is applied to icon, title and action buttons. */
         var ACCENT_MODE_NONE: Int = 0
+
+        /** Apply accent color to icon and title only. */
         @JvmField
-                /** Apply accent color to icon and title only. */
         var ACCENT_MODE_TITLE: Int = 1
+
+        /** Apply accent color to action buttons only. */
         @JvmField
-                /** Apply accent color to action buttons only. */
         var ACCENT_MODE_ACTION: Int = 2
+
+        /** Apply accent color to icon, title and action buttons. */
         @JvmField
-                /** Apply accent color to icon, title and action buttons. */
         var ACCENT_MODE_ALL: Int = 3
+
         @JvmField
         var MATCH_PARENT: Int = ViewGroup.LayoutParams.MATCH_PARENT
         @JvmField
