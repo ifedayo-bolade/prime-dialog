@@ -48,7 +48,8 @@ public class MainActivity extends AppCompatActivity {
                 "Header Dialog",
                 "Animated Dialog",
                 "Listener Dialog",
-                "Custom View Dialog",
+                "Custom View Dialog 1",
+                "Custom View Dialog 2",
         };
         ArrayList<String> list = new ArrayList<>(Arrays.asList(strings));
         SampleAdapter adapter = new SampleAdapter(this, list);
