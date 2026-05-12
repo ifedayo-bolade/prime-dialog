@@ -36,8 +36,8 @@ public class MainActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-//        Toolbar toolbar = findViewById(R.id.toolBar);
-//        setSupportActionBar(toolbar);
+        Toolbar toolbar = findViewById(R.id.toolBar);
+        setSupportActionBar(toolbar);
         getOnBackPressedDispatcher().addCallback(this, onBackPressedCallback);
 
         String[] strings = new String[]{
