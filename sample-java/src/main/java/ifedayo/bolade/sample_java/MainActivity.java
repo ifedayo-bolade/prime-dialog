@@ -36,8 +36,8 @@ public class MainActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-        Toolbar toolbar = findViewById(R.id.toolBar);
-        setSupportActionBar(toolbar);
+//        Toolbar toolbar = findViewById(R.id.toolBar);
+//        setSupportActionBar(toolbar);
         getOnBackPressedDispatcher().addCallback(this, onBackPressedCallback);
 
         String[] strings = new String[]{
@@ -187,7 +187,7 @@ public class MainActivity extends AppCompatActivity {
                 .setHeaderBackgroundRes(R.drawable.header)
                 .setHeaderOverlayTintDepth("40")
                 .setIcon(R.drawable.ic_info).setTitle("HEY THERE!")
-                .setMessage("Hi there,\nJust to let you know I have my ears to the ground for your clicks and interactions.\n\nBy the way, 'Don't remind me again' could be a handy feature for you.")
+                .setMessage("Hi there,\nJust to let you know I have my ears to the ground for your clicks and interactions.\nBy the way, 'Don't remind me again' could be a handy feature for you.\n\nHi there,\nJust to let you know I have my ears to the ground for your clicks and interactions.\nBy the way, 'Don't remind me again' could be a handy feature for you.\nHi there,\nJust to let you know I have my ears to the ground for your clicks and interactions.\nBy the way, 'Don't remind me again' could be a handy feature for you.\nHi there,\nJust to let you know I have my ears to the ground for your clicks and interactions.\nBy the way, 'Don't remind me again' could be a handy feature for you.\nHi there,\nJust to let you know I have my ears to the ground for your clicks and interactions.\nBy the way, 'Don't remind me again' could be a handy feature for you.\nHi there,\nJust to let you know I have my ears to the ground for your clicks and interactions.\nBy the way, 'Don't remind me again' could be a handy feature for you.")
                 .setMessageTypefaceRes(R.font.maitree_medium)
                 .setNegativeButton("CLICK ME", (dialog, buttonId) -> {
                     // dialog.dismiss();
@@ -226,6 +226,34 @@ public class MainActivity extends AppCompatActivity {
                 .show();
     }
 
+    /** Set a custom view from a 'Layout resource' or 'View' to use as
+     * dialog content.
+     * If needed, you could set percentage width and height based
+     * on your need. Both are set to 100 here to achieve fullscreen display. */
+    void demoCustomDialog2(){
+        new PrimeDialog(this)
+                .setCustomView(R.layout.custom_dialog_layout)
+                .setOnDialogShowListener(dialog -> {
+                    showLoginGuide();
+
+                    Button loginButton = dialog.findViewById(R.id.btnLogin);
+                    loginButton.setOnClickListener(view -> {
+                        loginButton.setText("HEY, I'M A DUMMY BUTTON");
+                        showMessage("Click 'CREATE ACCOUNT'");
+                    });
+                })
+
+                .setAccentColorRes(R.color.colorOrange)  // Optional
+                .setDontShowAgain(onDontShowAgainListener) // Optional
+                .setBackgroundColor(Color.LTGRAY) // Optional
+                .setActionLayoutBackgroundColor(Color.DKGRAY) // Optional
+                .setNeutralButton("CREATE ACCOUNT", (dialog, buttonId) -> // Optional
+                        showMessage("I'm a PrimeDialog action button!"))
+                .setPositiveButton("DISMISS") // Optional
+
+                .show();
+    }
+
     private void showLoginGuide() {
         showMessage("Please click the login button");
     }
@@ -255,16 +283,7 @@ public class MainActivity extends AppCompatActivity {
     private final OnBackPressedCallback onBackPressedCallback = new OnBackPressedCallback(true) {
         @Override
         public void handleOnBackPressed() {
-//            MainActivity.this.finish();
-
-            new PrimeDialog(MainActivity.this)
-                    .setBackgroundColorRes(R.color.card_background_unpressed)
-                    .setMessage("Exit Sample (Java)?")
-                    .setMessageTypefaceRes(R.font.belgrano)
-                    .setNegativeButton("CANCEL")
-                    .setPositiveButton("EXIT NOW", (dialog, buttonId) ->
-                            MainActivity.this.finish())
-                    .show();
+            MainActivity.this.finish();
         }
     };
 }

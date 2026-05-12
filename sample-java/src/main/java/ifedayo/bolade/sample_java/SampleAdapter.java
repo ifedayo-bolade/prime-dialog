@@ -55,6 +55,7 @@ public class SampleAdapter extends RecyclerView.Adapter<SampleAdapter.SampleView
                     case 5: mainActivity.demoAnimatedDialog();break;
                     case 6: mainActivity.demoListenerDialog();break;
                     case 7: mainActivity.demoCustomDialog();break;
+                    case 8: mainActivity.demoCustomDialog2();break;
                 }
             });
         }

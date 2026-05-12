@@ -2,9 +2,11 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/rootLayout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
+    <!-- Some margins are dynamically set. See 'applyDynamicMargins()' in PrimeDialog. -->
     <RelativeLayout
         android:id="@+id/header"
         android:layout_width="match_parent"
@@ -62,6 +64,7 @@
 
     </RelativeLayout>
 
+    <!-- Some margins are dynamically set. See 'applyDynamicMargins()' in PrimeDialog. -->
     <LinearLayout
         android:id="@+id/title_layout"
         android:layout_width="match_parent"
@@ -93,12 +96,14 @@
 
     </LinearLayout>
 
+    <!-- Some margins are dynamically set. See 'applyDynamicMargins()' in PrimeDialog. -->
     <FrameLayout
         android:id="@+id/frameLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/title_layout"
-        android:background="@android:color/white">
+        android:background="@android:color/white"
+        android:visibility="gone">
 
         <LinearLayout
             android:id="@+id/messageLayout"
@@ -130,215 +135,76 @@
 
             </ScrollView>
 
-            <RelativeLayout
-                android:id="@+id/actionLayout1"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp">
-
-                <LinearLayout
-                    android:id="@+id/dontShowAgainLayout"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:paddingTop="4dp"
-                    android:paddingBottom="4dp"
-                    android:orientation="horizontal"
-                    android:visibility="gone">
-
-                    <androidx.appcompat.widget.AppCompatCheckBox
-                        android:id="@+id/checkBox"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="11dp"
-                        android:layout_marginEnd="11dp"
-                        android:gravity="start|center"
-                        android:layout_gravity="end"
-                        android:text="Don't show again"
-                        android:textSize="14.5sp"
-                        android:typeface="sans"
-                        android:textColor="@android:color/black"
-                        tools:checked="true"/>
-
-                </LinearLayout>
-
-                <RelativeLayout
-                    android:id="@+id/buttons_layout"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="14dp"
-                    android:layout_marginEnd="14dp"
-                    android:layout_below="@+id/dontShowAgainLayout">
-
-                    <LinearLayout
-                        android:id="@+id/dialog_btn_neutral_layout1"
-                        android:layout_width="wrap_content"
-                        android:layout_height="33dp"
-                        android:gravity="center"
-                        android:layout_marginTop="4dp"
-                        android:layout_marginBottom="8dp"
-                        android:paddingTop="2dp"
-                        android:paddingBottom="2dp"
-                        android:paddingLeft="6dp"
-                        android:paddingRight="6dp"
-                        android:layout_alignParentStart="true"
-                        android:layout_centerHorizontal="true"
-                        android:visibility="gone">
-
-                        <androidx.appcompat.widget.AppCompatTextView
-                            android:id="@+id/dialog_btn_neutral_textview1"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="5dp"
-                            android:layout_marginEnd="5dp"
-                            android:maxLines="1"
-                            android:ellipsize="end"
-                            android:gravity="center"
-                            android:text="CANCEL"
-                            android:textColor="#353535"
-                            android:textStyle="bold"
-                            android:typeface="monospace"/>
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentEnd="true"
-                        android:layout_centerHorizontal="true"
-                        android:orientation="horizontal">
-
-                        <LinearLayout
-                            android:id="@+id/dialog_btn_negative_layout1"
-                            android:layout_width="wrap_content"
-                            android:layout_height="33dp"
-                            android:layout_marginTop="4dp"
-                            android:layout_marginBottom="8dp"
-                            android:layout_marginEnd="2dp"
-                            android:paddingTop="2dp"
-                            android:paddingBottom="2dp"
-                            android:paddingLeft="6dp"
-                            android:paddingRight="6dp"
-                            android:gravity="center"
-                            android:visibility="gone">
-
-                            <androidx.appcompat.widget.AppCompatTextView
-                                android:id="@+id/dialog_btn_negative_textview1"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginStart="5dp"
-                                android:layout_marginEnd="5dp"
-                                android:maxLines="1"
-                                android:ellipsize="end"
-                                android:gravity="center"
-                                android:text="CANCEL"
-                                android:textColor="#353535"
-                                android:textStyle="bold"
-                                android:typeface="monospace"/>
-
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:id="@+id/dialog_btn_positive_layout1"
-                            android:layout_width="wrap_content"
-                            android:layout_height="33dp"
-                            android:layout_marginTop="4dp"
-                            android:layout_marginBottom="8dp"
-                            android:paddingTop="2dp"
-                            android:paddingBottom="2dp"
-                            android:paddingLeft="6dp"
-                            android:paddingRight="6dp"
-                            android:gravity="center"
-                            android:visibility="gone">
-
-                            <androidx.appcompat.widget.AppCompatTextView
-                                android:id="@+id/dialog_btn_positive_textview1"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginStart="5dp"
-                                android:layout_marginEnd="5dp"
-                                android:maxLines="1"
-                                android:ellipsize="end"
-                                android:gravity="center"
-                                android:text="YES"
-                                android:textColor="#353535"
-                                android:textStyle="bold"
-                                android:typeface="monospace"/>
-
-                        </LinearLayout>
-
-                    </LinearLayout>
-
-                </RelativeLayout>
-
-            </RelativeLayout>
-
         </LinearLayout>
 
     </FrameLayout>
 
+    <!-- Some margins are dynamically set. See 'applyDynamicMargins()' in PrimeDialog. -->
     <RelativeLayout
-        android:id="@+id/actionLayout2"
+        android:id="@+id/actionLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/frameLayout"
-        android:background="@android:color/white"
         android:visibility="gone">
 
-        <RelativeLayout
+        <LinearLayout
+            android:id="@+id/dontShowAgainLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="14dp"
-            android:layout_marginEnd="14dp">
+            android:paddingTop="4dp"
+            android:paddingBottom="4dp"
+            android:orientation="horizontal"
+            android:visibility="gone">
 
-            <LinearLayout
-                android:id="@+id/dialog_btn_neutral_layout2"
-                android:layout_width="wrap_content"
-                android:layout_height="33dp"
-                android:gravity="center"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp"
-                android:paddingLeft="6dp"
-                android:paddingRight="6dp"
-                android:layout_alignParentStart="true"
-                android:visibility="gone">
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/dialog_btn_neutral_textview2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="5dp"
-                    android:layout_marginEnd="5dp"
-                    android:maxLines="1"
-                    android:ellipsize="end"
-                    android:gravity="center"
-                    android:text="CANCEL"
-                    android:textColor="#353535"
-                    android:textStyle="bold"
-                    android:typeface="monospace"/>
-
-            </LinearLayout>
-
-            <LinearLayout
+            <androidx.appcompat.widget.AppCompatCheckBox
+                android:id="@+id/checkBox"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:gravity="center"
-                android:orientation="horizontal">
+                android:layout_marginStart="11dp"
+                android:layout_marginEnd="11dp"
+                android:gravity="start|center"
+                android:layout_gravity="end"
+                android:text="Don't show again"
+                android:textSize="14.5sp"
+                android:typeface="sans"
+                android:textColor="@android:color/black"
+                tools:checked="true"/>
+
+        </LinearLayout>
+
+        <!-- Some margins are dynamically set. See 'applyDynamicMargins()' in PrimeDialog. -->
+        <FrameLayout
+            android:id="@+id/buttonLayoutParent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/dontShowAgainLayout"
+            android:visibility="gone">
+
+            <RelativeLayout
+                android:id="@+id/buttonLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="14dp"
+                android:layout_marginEnd="14dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="8dp">
 
                 <LinearLayout
-                    android:id="@+id/dialog_btn_negative_layout2"
+                    android:id="@+id/dialog_btn_neutral_layout"
                     android:layout_width="wrap_content"
-                    android:layout_height="33dp"
-                    android:layout_marginEnd="2dp"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginBottom="8dp"
+                    android:layout_height="32dp"
+                    android:gravity="center"
+                    android:layout_marginTop="4dp"
+                    android:paddingTop="2dp"
+                    android:paddingBottom="2dp"
                     android:paddingLeft="6dp"
                     android:paddingRight="6dp"
-                    android:gravity="center"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerHorizontal="true"
                     android:visibility="gone">
 
                     <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/dialog_btn_negative_textview2"
+                        android:id="@+id/dialog_btn_neutral_textview"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="5dp"
@@ -354,37 +220,74 @@
                 </LinearLayout>
 
                 <LinearLayout
-                    android:id="@+id/dialog_btn_positive_layout2"
                     android:layout_width="wrap_content"
-                    android:layout_height="33dp"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginBottom="8dp"
-                    android:paddingTop="2dp"
-                    android:paddingBottom="2dp"
-                    android:paddingLeft="6dp"
-                    android:paddingRight="6dp"
-                    android:gravity="center"
-                    android:visibility="gone">
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerHorizontal="true"
+                    android:orientation="horizontal">
 
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/dialog_btn_positive_textview2"
+                    <LinearLayout
+                        android:id="@+id/dialog_btn_negative_layout"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="5dp"
-                        android:layout_marginEnd="5dp"
-                        android:maxLines="1"
-                        android:ellipsize="end"
+                        android:layout_height="32dp"
+                        android:layout_marginEnd="2dp"
+                        android:layout_marginTop="4dp"
+                        android:paddingTop="2dp"
+                        android:paddingBottom="2dp"
+                        android:paddingLeft="6dp"
+                        android:paddingRight="6dp"
                         android:gravity="center"
-                        android:text="YES"
-                        android:textColor="#353535"
-                        android:textStyle="bold"
-                        android:typeface="monospace"/>
+                        android:visibility="gone">
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/dialog_btn_negative_textview"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="5dp"
+                            android:layout_marginEnd="5dp"
+                            android:maxLines="1"
+                            android:ellipsize="end"
+                            android:gravity="center"
+                            android:text="CANCEL"
+                            android:textColor="#353535"
+                            android:textStyle="bold"
+                            android:typeface="monospace"/>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/dialog_btn_positive_layout"
+                        android:layout_width="wrap_content"
+                        android:layout_height="32dp"
+                        android:layout_marginTop="4dp"
+                        android:paddingTop="2dp"
+                        android:paddingBottom="2dp"
+                        android:paddingLeft="6dp"
+                        android:paddingRight="6dp"
+                        android:gravity="center"
+                        android:visibility="gone">
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/dialog_btn_positive_textview"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="5dp"
+                            android:layout_marginEnd="5dp"
+                            android:maxLines="1"
+                            android:ellipsize="end"
+                            android:gravity="center"
+                            android:text="YES"
+                            android:textColor="#353535"
+                            android:textStyle="bold"
+                            android:typeface="monospace"/>
+
+                    </LinearLayout>
 
                 </LinearLayout>
 
-            </LinearLayout>
+            </RelativeLayout>
 
-        </RelativeLayout>
+        </FrameLayout>
 
     </RelativeLayout>
 

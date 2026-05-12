@@ -75,6 +75,7 @@ constructor(
     private var nightColor = "#131316".toColorInt()
     private var isCustomView = false
     private var dontShowAgainSet = false
+    private var isActionButtonSet = false
     private val dialog: Dialog
     private var headerLayout: RelativeLayout
     private var overlay: RelativeLayout
@@ -94,6 +95,7 @@ constructor(
 
     private var iconAttributes: IconAttributes = IconAttributes()
     private var titleAttributes: TitleAttributes = TitleAttributes()
+    private var messageAttributes: MessageAttributes = MessageAttributes()
 
     private val TAG = "PrimeDialog"
 
@@ -119,6 +121,10 @@ constructor(
         var letterSpacing: Float? = null,
         var animation: Animation? = null,
         var overrideHeaderColor: Boolean? = null
+    )
+
+    private data class MessageAttributes(
+        var isMarginSet: Boolean = false
     )
 
     init {
@@ -153,6 +159,7 @@ constructor(
     fun setCustomView(view: View, layoutParams: FrameLayout.LayoutParams? = null): PrimeDialog {
         isCustomView = true
         frameLayout.addView(view)
+        frameLayout.isVisible = true
         layoutParams?.let { view.layoutParams = it }
         customView = frameLayout
         return this
@@ -168,6 +175,7 @@ constructor(
             context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         customView = layoutInflater.inflate(layoutRes, null) as ViewGroup
         frameLayout.addView(customView)
+        frameLayout.isVisible = true
         return this
     }
 
@@ -189,6 +197,7 @@ constructor(
             context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         val layoutView = layoutInflater.inflate(layoutRes, null)
         frameLayout.addView(layoutView)
+        frameLayout.isVisible = true
         if (titleTextViewIdRes != 0) {
             title = frameLayout.findViewById(titleTextViewIdRes)
         }
@@ -514,9 +523,9 @@ constructor(
         return setMessage(context.getString(stringRes))
     }
 
-    fun setMessage(charSequence: CharSequence?): PrimeDialog {
-        setMessageMargin()
+    fun setMessage(charSequence: CharSequence): PrimeDialog {
         message.text = charSequence
+        frameLayout.isVisible = charSequence.isNotEmpty()
         return this
     }
 
@@ -567,21 +576,6 @@ constructor(
                 context.resources.displayMetrics
             ), multiplier
         )
-        return this
-    }
-
-    fun setMargin(marginAll: Int): PrimeDialog {
-        return setMargin(marginAll, marginAll, marginAll, marginAll)
-    }
-
-    fun setMargin(left: Int = 0, top: Int = 0, right: Int = 0, bottom: Int = 0): PrimeDialog {
-        if(isCustomView) {
-            val layoutParams = frameLayout.layoutParams as? RelativeLayout.LayoutParams
-            layoutParams?.setMargins(toDP(left), toDP(top), toDP(right), toDP(bottom))
-        } else {
-            val layoutParams = message.layoutParams as? RelativeLayout.LayoutParams
-            layoutParams?.setMargins(toDP(left), toDP(top), toDP(right), toDP(bottom))
-        }
         return this
     }
 
@@ -722,18 +716,19 @@ constructor(
     }
 
     /**
-     * Apply specific margins to left, top, right and bottom of message.
+     * Apply specific margins (in dp) to left, top, right and bottom of message.
      * @see [setMessageMargin]
      */
-    fun setMessageMargin(left: Int = 16, top: Int = 0, right: Int = 16, bottom: Int = 0): PrimeDialog {
+    fun setMessageMargin(leftDp: Int = 16, topDp: Int = 0, rightDp: Int = 16, bottomDp: Int = 0): PrimeDialog {
         if (isCustomView) {
             val linearLayout = frameLayout.getChildAt(0) as? LinearLayout
             val layoutParams = linearLayout?.layoutParams as? RelativeLayout.LayoutParams
-            layoutParams?.setMargins(toDP(left), toDP(top), toDP(right), toDP(bottom))
+            layoutParams?.setMargins(toDP(leftDp), toDP(topDp), toDP(rightDp), toDP(bottomDp))
         } else {
             val layoutParams = message.layoutParams as? RelativeLayout.LayoutParams
-            layoutParams?.setMargins(toDP(left), toDP(top), toDP(right), toDP(bottom))
+            layoutParams?.setMargins(toDP(leftDp), toDP(topDp), toDP(rightDp), toDP(bottomDp))
         }
+        messageAttributes.isMarginSet = true
         return this
     }
 
@@ -760,15 +755,27 @@ constructor(
         return this
     }
 
+    /** Set the background color for the action layouts including
+     * both the 'Don't show again' layout and action buttons layout.
+     * @see setDontShowAgainLayoutBackgroundColor
+     * @see setActionButtonLayoutBackgroundColor */
     fun setActionLayoutBackgroundColor(colorCode: String): PrimeDialog {
         return setActionLayoutBackgroundColor(colorCode.toColorInt())
     }
 
+    /** Set the background color for the action layouts including
+     * both the 'Don't show again' layout and action buttons layout.
+     * @see setDontShowAgainLayoutBackgroundColor
+     * @see setActionButtonLayoutBackgroundColor */
     fun setActionLayoutBackgroundColorRes(@ColorRes colorRes: Int): PrimeDialog {
         return setActionLayoutBackgroundColor(getColor(colorRes))
     }
 
     private var isActionLayoutBackgroundColorSet = false
+    /** Set the background color for the action layouts including
+     * both the 'Don't show again' layout and action buttons layout.
+     * @see setDontShowAgainLayoutBackgroundColor
+     * @see setActionButtonLayoutBackgroundColor */
     fun setActionLayoutBackgroundColor(@ColorInt color: Int): PrimeDialog {
         setInternalActionLayoutBackgroundColor(color)
         isActionLayoutBackgroundColorSet = true
@@ -777,20 +784,50 @@ constructor(
 
     private fun setInternalActionLayoutBackgroundColor(@ColorInt color: Int): PrimeDialog {
         if (!isActionLayoutBackgroundColorSet) {
-            val actionLayout = if(isCustomView) binding.actionLayout2 else binding.actionLayout1
-            actionLayout.setBackgroundColor(getColor(color))
+            binding.actionLayout.setBackgroundColor(getColor(color))
         }
         return this
     }
 
+    /** Set the background color for the action buttons layout.
+     * @see setActionLayoutBackgroundColor
+     * @see setDontShowAgainLayoutBackgroundColor */
+    fun setActionButtonLayoutBackgroundColorRes(@ColorRes colorRes: Int): PrimeDialog {
+        return setActionButtonLayoutBackgroundColor(getColor(colorRes))
+    }
+
+    /** Set the background color for the action buttons layout.
+     * @see setActionLayoutBackgroundColor
+     * @see setDontShowAgainLayoutBackgroundColor */
+    fun setActionButtonLayoutBackgroundColor(colorHex: String): PrimeDialog {
+        return setActionButtonLayoutBackgroundColor(colorHex.toColorInt())
+    }
+
+    /** Set the background color for the action buttons layout.
+     * @see setActionLayoutBackgroundColor
+     * @see setDontShowAgainLayoutBackgroundColor */
+    fun setActionButtonLayoutBackgroundColor(@ColorInt color: Int): PrimeDialog {
+        binding.buttonLayoutParent.setBackgroundColor(getColor(color))
+        return this
+    }
+
+    /** Set the background color for the 'Don't show again' layout.
+     * @see setActionLayoutBackgroundColor
+     * @see setActionButtonLayoutBackgroundColor */
     fun setDontShowAgainLayoutBackgroundColorRes(@ColorRes colorRes: Int): PrimeDialog {
         return setDontShowAgainLayoutBackgroundColor(getColor(colorRes))
     }
 
+    /** Set the background color for the 'Don't show again' layout.
+     * @see setActionLayoutBackgroundColor
+     * @see setActionButtonLayoutBackgroundColor */
     fun setDontShowAgainLayoutBackgroundColor(colorHex: String): PrimeDialog {
         return setDontShowAgainLayoutBackgroundColor(colorHex.toColorInt())
     }
 
+    /** Set the background color for the 'Don't show again' layout.
+     * @see setActionLayoutBackgroundColor
+     * @see setActionButtonLayoutBackgroundColor */
     fun setDontShowAgainLayoutBackgroundColor(@ColorInt color: Int): PrimeDialog {
         binding.dontShowAgainLayout.setBackgroundColor(getColor(color))
         return this
@@ -812,9 +849,9 @@ constructor(
         label: String,
         onClickListener: OnDialogButtonClickListener = defaultOnClickListener
     ): PrimeDialog {
-        updateActionLayoutVisibility()
+        setActionButtonLayoutVisibility()
         POSITIVE_BUTTON =
-            if (isCustomView) R.id.dialog_btn_positive_layout2 else R.id.dialog_btn_positive_layout1
+            if (isCustomView) R.id.dialog_btn_positive_layout else R.id.dialog_btn_positive_layout
         positiveButtonLayout = findViewById<LinearLayout>(POSITIVE_BUTTON).apply {
             isVisible = true
             positiveButtonTextView = (getChildAt(0) as? AppCompatTextView)?.apply {
@@ -842,9 +879,9 @@ constructor(
         label: String,
         onClickListener: OnDialogButtonClickListener = defaultOnClickListener
     ): PrimeDialog {
-        updateActionLayoutVisibility()
+        setActionButtonLayoutVisibility()
         NEGATIVE_BUTTON =
-            if (isCustomView) R.id.dialog_btn_negative_layout2 else R.id.dialog_btn_negative_layout1
+            if (isCustomView) R.id.dialog_btn_negative_layout else R.id.dialog_btn_negative_layout
         negativeButtonLayout = findViewById<LinearLayout>(NEGATIVE_BUTTON).apply {
             isVisible = true
             negativeButtonTextView = (getChildAt(0) as? AppCompatTextView)?.apply {
@@ -872,9 +909,9 @@ constructor(
         label: String,
         onClickListener: OnDialogButtonClickListener = defaultOnClickListener
     ): PrimeDialog {
-        updateActionLayoutVisibility()
+        setActionButtonLayoutVisibility()
         NEUTRAL_BUTTON =
-            if (isCustomView) R.id.dialog_btn_neutral_layout2 else R.id.dialog_btn_neutral_layout1
+            if (isCustomView) R.id.dialog_btn_neutral_layout else R.id.dialog_btn_neutral_layout
         neutralButtonLayout = findViewById<LinearLayout>(NEUTRAL_BUTTON).apply {
             isVisible = true
             neutralButtonTextView = (getChildAt(0) as? AppCompatTextView)?.apply {
@@ -1279,17 +1316,17 @@ constructor(
 
     fun getActionButtonLayout(buttonId: Int): LinearLayout {
         return when(buttonId){
-            NEGATIVE_BUTTON -> if(isCustomView) binding.dialogBtnNegativeLayout2 else binding.dialogBtnNegativeLayout1
-            NEUTRAL_BUTTON -> if(isCustomView) binding.dialogBtnNeutralLayout2 else binding.dialogBtnNeutralLayout1
-            else -> if(isCustomView) binding.dialogBtnPositiveLayout2 else binding.dialogBtnPositiveLayout1
+            NEGATIVE_BUTTON -> binding.dialogBtnNegativeLayout
+            NEUTRAL_BUTTON -> binding.dialogBtnNeutralLayout
+            else -> binding.dialogBtnPositiveLayout
         }
     }
 
     fun getActionButtonTextView(buttonId: Int): AppCompatTextView {
         return when(buttonId){
-            NEGATIVE_BUTTON -> if(isCustomView) binding.dialogBtnNegativeTextview2 else binding.dialogBtnNegativeTextview1
-            NEUTRAL_BUTTON -> if(isCustomView) binding.dialogBtnNeutralTextview2 else binding.dialogBtnNeutralTextview1
-            else -> if(isCustomView) binding.dialogBtnPositiveTextview2 else binding.dialogBtnPositiveTextview1
+            NEGATIVE_BUTTON -> binding.dialogBtnNegativeTextview
+            NEUTRAL_BUTTON -> binding.dialogBtnNeutralTextview
+            else -> binding.dialogBtnPositiveTextview
         }
     }
 
@@ -1313,6 +1350,7 @@ constructor(
 
         val isNightMode = isNightModeActive
         if (dontShowAgainSet) {
+            binding.actionLayout.isVisible = true
             binding.dontShowAgainLayout.isVisible = true
             binding.checkBox.apply {
                 setOnCheckedChangeListener { _, isChecked ->
@@ -1353,12 +1391,41 @@ constructor(
             }
         }
 
+        applyDynamicMargins()
+
         if(isHeaderConfiguring && !isHeaderShown){
             Log.i(TAG, "Header configured with no background image or color")
             showDebugToast("Set header background image or color")
         }
 
         return dialog
+    }
+
+    private fun applyDynamicMargins() {
+        with(binding){
+            if(!isCustomView){
+                // Apply a top margin of 4dp to 'actionLayout' if 'Don't show again' is in use.
+                val actionLayoutParams = actionLayout.layoutParams as? RelativeLayout.LayoutParams
+                actionLayoutParams?.apply {
+                    topMargin = toDP(if(dontShowAgainSet) 4 else 0)
+                }
+
+                if(message.text.isNotEmpty() && !messageAttributes.isMarginSet) {
+                    if(!titleAttributes.isTitleSet){
+                        val margin = 9
+                        val bottomMargin = if(isActionButtonSet) 0 else margin
+                        setMessageMargin(topDp = margin, bottomDp = bottomMargin)
+                    } else {
+                        setMessageMargin()
+                    }
+                }
+            }
+
+            if(dontShowAgainSet && isActionButtonSet){
+                val buttonLayoutParams = buttonLayout.layoutParams as? FrameLayout.LayoutParams
+                buttonLayoutParams?.topMargin = toDP(0)
+            }
+        }
     }
 
     private fun applyIconAttributes() {
@@ -1474,7 +1541,7 @@ constructor(
                          * called, the dialog height is reset to a maximum
                          * of [maxHeightPercent] of the device screen height.
                          *
-                         * If [setMaxHeight] is called, then then specified value of [maxHeightPercent]
+                         * If [setMaxHeight] is called, then the specified value of [maxHeightPercent]
                          * is used instead. */
                         if(dialogHeight > targetHeight || isMaxHeightMet)
                             setDialogHeight(maxHeightPercent)
@@ -1484,10 +1551,7 @@ constructor(
         })
     }
 
-    fun dismiss() {
-//        if()
-        dialog.dismiss()
-    }
+    fun dismiss() { dialog.dismiss() }
 
     /** Execute an indirect action button click by passing the button id
      * to this function. Button id could be one of [POSITIVE_BUTTON],
@@ -1497,11 +1561,10 @@ constructor(
         getActionButtonLayout(buttonId).performClick()
     }
 
-    private fun updateActionLayoutVisibility() {
-        with(binding){
-            actionLayout1.isVisible = !isCustomView
-            actionLayout2.isVisible = isCustomView
-        }
+    private fun setActionButtonLayoutVisibility() {
+        isActionButtonSet = true
+        binding.actionLayout.isVisible = true
+        binding.buttonLayoutParent.isVisible = true
     }
 
     private fun dpToPx(dp: Int): Int {
