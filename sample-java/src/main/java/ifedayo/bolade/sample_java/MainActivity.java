@@ -3,6 +3,7 @@ package ifedayo.bolade.sample_java;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.os.Handler;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -15,6 +16,8 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.RecyclerView;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -63,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
                 .setTitle("HELLO WORLD!")
                 .setMessage("I'm PrimeDialog, nice to meet you.")
                 .setNegativeButton("DISMISS")
-                .setPositiveButton("I SEE YOU", dialog -> {
+                .setPositiveButton("I SEE YOU", (dialog, buttonId) -> {
                     showMessage("I see you too!");
                     dialog.dismiss();
                 }).show();
@@ -148,14 +151,12 @@ public class MainActivity extends AppCompatActivity {
     void demoHeaderDialog() {
         new PrimeDialog(this)
                 .setTitle("HEY THERE!").setCancelable(false)
-                .setDialogWidth(95)
                 .setHeaderBackgroundRes(R.drawable.header)
                 .setHeaderOverlayTintDepth("65")
                 .setHeaderHeight(86).setIcon(R.drawable.ic_info)
-                .setMessage("Hi there,\nI'm PrimeDialog with Header support. An image resource, bitmap or a solid color can be used as header background.\n\nBy the way, 'Don't show again' could be a handy feature for you.")
-                .setMessageTypefaceRes(R.font.maitree_medium)
+                .setMessage("Hi there,\nI'm PrimeDialog with Header support. An image resource, bitmap or a solid color can be used as header background.")
+                .setMessageLineSpacing(4F)
                 .setPositiveButton("DISMISS")
-                .setDontShowAgain(onDontShowAgainListener)
                 .show();
     }
 
@@ -181,19 +182,19 @@ public class MainActivity extends AppCompatActivity {
 
     void demoListenerDialog() {
         new PrimeDialog(this)
+                .setDialogWidth(95)
                 .setHeaderBackgroundRes(R.drawable.header)
+                .setHeaderOverlayTintDepth("40")
                 .setIcon(R.drawable.ic_info).setTitle("HEY THERE!")
-                .setMessage("Hi there,\n\nJust letting you know I have my ears to the ground for your clicks and interactions.")
-                .setMessageLineSpacing(4F)
-                .setNegativeButton("CLICK ME", dialog -> {
+                .setMessage("Hi there,\nJust to let you know I have my ears to the ground for your clicks and interactions.\n\nBy the way, 'Don't remind me again' could be a handy feature for you.")
+                .setMessageTypefaceRes(R.font.maitree_medium)
+                .setNegativeButton("CLICK ME", (dialog, buttonId) -> {
                     // dialog.dismiss();
                     showMessage("You clicked me!");
                 })
                 .setPositiveButton("DISMISS")
                 .setOnDialogShowListener(dialog ->
                         showMessage("Hello from onDialogShowListener!"))
-                .setOnDialogDismissListener((dialog, buttonId) ->
-                        showMessage("Goodbye from onDialogDismissListener"))
                 .setDontShowAgain("Don't remind me again", onDontShowAgainListener)
                 .show();
     }
@@ -253,7 +254,16 @@ public class MainActivity extends AppCompatActivity {
     private final OnBackPressedCallback onBackPressedCallback = new OnBackPressedCallback(true) {
         @Override
         public void handleOnBackPressed() {
-            MainActivity.this.finish();
+//            MainActivity.this.finish();
+
+            new PrimeDialog(MainActivity.this)
+                    .setBackgroundColorRes(R.color.card_background_unpressed)
+                    .setMessage("Exit Sample (Java)?")
+                    .setMessageTypefaceRes(R.font.belgrano)
+                    .setNegativeButton("CANCEL")
+                    .setPositiveButton("EXIT NOW", (dialog, buttonId) ->
+                            MainActivity.this.finish())
+                    .show();
         }
     };
 }

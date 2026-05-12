@@ -26,7 +26,7 @@ class MainActivity : AppCompatActivity() {
         PrimeDialog(this)
             .setMessage("Hello world!")
             .setNegativeButton("DISMISS")
-            .setPositiveButton("I SEE YOU"){ dialog ->
+            .setPositiveButton("I SEE YOU"){ dialog, _ ->
                 dialog.dismiss()
                 showMessage("I see you!")
             }
@@ -39,7 +39,7 @@ class MainActivity : AppCompatActivity() {
             .setMessage("I'm your animated dialog styled with an ENTER and EXIT animation defined within the app theme.")
             .setMessageLineSpacing(6F)
             .setNegativeButton("DISMISS")
-            .setPositiveButton("I SEE YOU"){ dialog ->
+            .setPositiveButton("I SEE YOU"){ dialog, _ ->
                 dialog.dismiss()
                 showMessage("I see you!")
             }

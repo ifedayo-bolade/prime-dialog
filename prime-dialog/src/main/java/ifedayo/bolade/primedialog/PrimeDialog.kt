@@ -40,7 +40,6 @@ import androidx.annotation.IdRes
 import androidx.annotation.LayoutRes
 import androidx.annotation.StringRes
 import androidx.annotation.StyleRes
-import androidx.appcompat.widget.AppCompatCheckBox
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.ContextCompat
@@ -798,7 +797,7 @@ constructor(
     }
 
     private val defaultOnClickListener =
-        OnDialogButtonClickListener { dialog -> dialog.dismiss() }
+        OnDialogButtonClickListener { dialog, _ -> dialog.dismiss() }
 
     @JvmOverloads
     fun setPositiveButton(
@@ -823,7 +822,7 @@ constructor(
                 setTypeface(Typeface.DEFAULT_BOLD)
             }
             setOnClickListener {
-                onClickListener.onDialogButtonClick(this@PrimeDialog)
+                onClickListener.onDialogButtonClick(this@PrimeDialog, POSITIVE_BUTTON)
                 actionID = POSITIVE_BUTTON
             }
         }
@@ -853,7 +852,7 @@ constructor(
                 setTypeface(Typeface.DEFAULT_BOLD)
             }
             setOnClickListener {
-                onClickListener.onDialogButtonClick(this@PrimeDialog)
+                onClickListener.onDialogButtonClick(this@PrimeDialog, NEGATIVE_BUTTON)
                 actionID = NEGATIVE_BUTTON
             }
         }
@@ -883,7 +882,7 @@ constructor(
                 setTypeface(Typeface.DEFAULT_BOLD)
             }
             setOnClickListener {
-                onClickListener.onDialogButtonClick(this@PrimeDialog)
+                onClickListener.onDialogButtonClick(this@PrimeDialog, NEUTRAL_BUTTON)
                 actionID = NEUTRAL_BUTTON
             }
         }
@@ -1041,7 +1040,7 @@ constructor(
     fun setOnDialogDismissListener(onDialogDismissListener: OnDialogDismissListener): PrimeDialog {
         onDialogDismissListenerSet = true
         dialog.setOnDismissListener {
-            onDialogDismissListener.onDialogDismiss(this@PrimeDialog, actionID)
+            onDialogDismissListener.onDialogDismiss(this@PrimeDialog)
             if (binding.checkBox.isChecked && dontShowAgainSet && onDontShowAgainListener != null) onDontShowAgainListener!!.onDismiss()
         }
         return this
@@ -1049,7 +1048,7 @@ constructor(
 
     fun setOnDialogCancelListener(onDialogCancelListener: OnDialogCancelListener): PrimeDialog {
         dialog.setOnCancelListener {
-            onDialogCancelListener.onDialogCancel(this, actionID)
+            onDialogCancelListener.onDialogCancel(this)
         }
         return this
     }
@@ -1486,6 +1485,7 @@ constructor(
     }
 
     fun dismiss() {
+//        if()
         dialog.dismiss()
     }
 
@@ -1576,7 +1576,10 @@ constructor(
     }
 
     fun interface OnDialogButtonClickListener {
-        fun onDialogButtonClick(dialog: PrimeDialog)
+        /** Action button click event.
+         * @param dialog An instance of PrimeDialog
+         * @param buttonId The id of the clicked action button */
+        fun onDialogButtonClick(dialog: PrimeDialog, buttonId: Int)
     }
 
     fun interface OnDialogShowListener {
@@ -1584,11 +1587,16 @@ constructor(
     }
 
     fun interface OnDialogDismissListener {
-        fun onDialogDismiss(dialog: PrimeDialog, buttonId: Int)
+        fun onDialogDismiss(dialog: PrimeDialog)
     }
 
+    /** A cancel event occurs when dialog is dismissed in any way that
+     * does not involve a call to 'dismiss()'. Such as clicking outside
+     * the dialog.
+     * This still triggers [OnDialogDismissListener], but only after
+     * [OnDialogCancelListener]*/
     fun interface OnDialogCancelListener {
-        fun onDialogCancel(dialog: PrimeDialog, buttonId: Int)
+        fun onDialogCancel(dialog: PrimeDialog)
     }
 
     private var onDontShowAgainListener: OnDontShowAgainListener? = null
@@ -1649,6 +1657,8 @@ constructor(
         var NEGATIVE_BUTTON: Int = 0
         @JvmField /** Neutral action button layout id*/
         var NEUTRAL_BUTTON: Int = 0
+        @JvmField /** Signifies id for internal dismiss action. */
+        var UNIDENTIFIED_BUTTON: Int = 0
         val TYPEFACE_SERIF_BOLD = Typeface.create("serif", Typeface.BOLD)
         val TYPEFACE_SERIF_NORMAL = Typeface.create("serif", Typeface.NORMAL)
         val TYPEFACE_SERIF_MONOSPACE = Typeface.create("serif-monospace", Typeface.BOLD)
