@@ -192,7 +192,7 @@
                 <LinearLayout
                     android:id="@+id/dialog_btn_neutral_layout"
                     android:layout_width="wrap_content"
-                    android:layout_height="32dp"
+                    android:layout_height="33dp"
                     android:gravity="center"
                     android:layout_marginTop="4dp"
                     android:paddingTop="2dp"
@@ -229,7 +229,7 @@
                     <LinearLayout
                         android:id="@+id/dialog_btn_negative_layout"
                         android:layout_width="wrap_content"
-                        android:layout_height="32dp"
+                        android:layout_height="33dp"
                         android:layout_marginEnd="2dp"
                         android:layout_marginTop="4dp"
                         android:paddingTop="2dp"
@@ -258,7 +258,7 @@
                     <LinearLayout
                         android:id="@+id/dialog_btn_positive_layout"
                         android:layout_width="wrap_content"
-                        android:layout_height="32dp"
+                        android:layout_height="33dp"
                         android:layout_marginTop="4dp"
                         android:paddingTop="2dp"
                         android:paddingBottom="2dp"

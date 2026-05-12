@@ -609,8 +609,8 @@ constructor(
         get() {
             val screenOrientation = context.resources.configuration.orientation
             return if(screenOrientation == Configuration.ORIENTATION_PORTRAIT)
-                0.76F  // 76% of dialog overall height
-            else 0.57F
+                0.7463F  // Approx. 75% of dialog overall height
+            else 0.56F
         }
 
     private var isDialogWidthSet = false
@@ -666,7 +666,7 @@ constructor(
     }
 
     private var isMaxHeightSet = false
-    private var maxHeightPercent = 98 // Setting 100 might cause dialog to exceed screen
+    private var maxHeightPercent = 100
     /**Sets the maximum height of the dialog. NOTE that this function will ALWAYS be
      * silenced/overridden everytime [setDialogHeight] is called alongside. */
     fun setMaxHeight(percentageHeight: Int): PrimeDialog {
@@ -750,9 +750,13 @@ constructor(
         return this
     }
 
-    fun setMessageLayoutBackground(@ColorRes colorRes: Int): PrimeDialog {
-        binding.messageLayout.setBackgroundColor(getColor(colorRes))
+    fun setMessageLayoutBackground(@ColorInt colorInt: Int): PrimeDialog {
+        binding.messageLayout.setBackgroundColor(getColor(colorInt))
         return this
+    }
+
+    fun setMessageLayoutBackgroundRes(@ColorRes colorRes: Int): PrimeDialog {
+        return setMessageLayoutBackground(colorRes)
     }
 
     /** Set the background color for the action layouts including
@@ -1507,9 +1511,10 @@ constructor(
     }
 
     fun show() {
+        val dialog = getDialog()
         if (context is Activity) {
             if (!(context as Activity).isFinishing) {
-                getDialog().show()
+                dialog.show()
             } else {
                 /** This prevents a crash due to 'BadTokenException', it occurs
                  * if the activity for whatever reason gets killed before the
@@ -1519,7 +1524,7 @@ constructor(
                 showDebugToast(message)
             }
         } else {
-            getDialog().show()
+            dialog.show()
         }
         if (!onDialogDismissListenerSet && dontShowAgainSet) {
             dialog.setOnDismissListener {

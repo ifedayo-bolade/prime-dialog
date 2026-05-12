@@ -174,8 +174,8 @@ public class MainActivity extends AppCompatActivity {
                 .setHeaderBackgroundRes(R.drawable.header, true)
                 .setHeaderOverlayTintDepth("45")
                 .setIcon(R.mipmap.ic_launcher).setIconTintEnabled(false)
-                .setTitle("HEY THERE!")
-                .setMessage("Hi there,\nI'm animated dialog, and I got my custom ENTER and EXIT animation from a style resource.")
+                .setTitle("HELLO!")
+                .setMessage("Hey there,\nI'm animated dialog, and I got my custom ENTER and EXIT animation from a style resource.\n\nI can't wait to try out your own animation style too.")
                 .setMessageTypeface(typeface)
                 .setNegativeButton("DISMISS")
                 .show();
