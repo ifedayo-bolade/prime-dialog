@@ -1421,6 +1421,8 @@ constructor(
                 }
             }
 
+            // Remove the default 4dp top margin on button layout when both the layout
+            // and 'Don't show again' layout are both in use, so they don't feel too apart.
             if(dontShowAgainSet && isActionButtonSet){
                 val buttonLayoutParams = buttonLayout.layoutParams as? FrameLayout.LayoutParams
                 buttonLayoutParams?.topMargin = toDP(0)
