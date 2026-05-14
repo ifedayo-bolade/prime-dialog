@@ -58,7 +58,7 @@ import kotlin.run
 import kotlin.text.substring
 
 /**
- * PrimeDialog v1.0.0
+ * PrimeDialog v1.0.1
  * Created by Ifedayo Bolade on May 14, 2026.
  */
 
@@ -525,9 +525,11 @@ constructor(
         return setMessage(context.getString(stringRes))
     }
 
-    fun setMessage(charSequence: CharSequence): PrimeDialog {
-        message.text = charSequence
-        frameLayout.isVisible = charSequence.isNotEmpty()
+    fun setMessage(charSequence: CharSequence?): PrimeDialog {
+        charSequence?.let {
+            message.text = it
+            frameLayout.isVisible = it.isNotEmpty()
+        }
         return this
     }
 

@@ -1,6 +1,2 @@
-v1.0.0
+(v1.0.0)
 - Initial release
-
-v1.0.1
--
-- Minor adjustments on interfaces and callbacks
