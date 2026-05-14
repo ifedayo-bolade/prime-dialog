@@ -182,7 +182,7 @@ public class MainActivity extends AppCompatActivity {
 
     void demoListenerDialog() {
         new PrimeDialog(this)
-                .setDialogWidth(95)
+                .setDialogWidth(95).setIcon(R.drawable.ic_info)
                 .setHeaderBackgroundRes(R.drawable.header)
                 .setHeaderOverlayTintDepth("40")
                 .setTitle("I'M LISTENING")
