@@ -1093,8 +1093,9 @@ constructor(
         onDialogDismissListenerSet = true
         this.onDialogDismissListener = onDialogDismissListener
         dialog.setOnKeyListener { _, actionId, _ ->
-            if(actionId == KeyEvent.KEYCODE_BACK)
+            if(actionId == KeyEvent.KEYCODE_BACK) {
                 dismissActionId = DISMISS_ACTION_BACK_PRESSED
+            }
             false
         }
         dialog.setOnDismissListener {
@@ -1104,6 +1105,10 @@ constructor(
         }
         dialog.setOnCancelListener {
             isDialogCancelled = true
+            if(dismissActionId == DISMISS_ACTION_POSITIVE_BUTTON ||
+                dismissActionId == DISMISS_ACTION_NEGATIVE_BUTTON ||
+                dismissActionId == DISMISS_ACTION_NEUTRAL_BUTTON)
+                dismissActionId = DISMISS_ACTION_CLICK_OUTSIDE
             dispatchDismissEvent(dismissActionId, true)
         }
         return this
