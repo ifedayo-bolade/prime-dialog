@@ -3,7 +3,6 @@ package ifedayo.bolade.sample_java;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.os.Handler;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -182,6 +181,42 @@ public class MainActivity extends AppCompatActivity {
     }
 
     void demoListenerDialog() {
+        new PrimeDialog(this)
+                .setDialogWidth(95)
+                .setHeaderBackgroundRes(R.drawable.header)
+                .setHeaderOverlayTintDepth("40")
+                .setTitle("I'M LISTENING")
+                .setMessage("Hey there!\nJust to let you know I have my ears to the ground for your clicks and interactions.\n\nBy the way, 'Don't remind me again' could be a handy feature for you.")
+                .setMessageTypefaceRes(R.font.maitree_medium)
+                .setNegativeButton("CLICK ME", (dialog, buttonId) -> {
+                    // dialog.dismiss();
+                    showMessage("You clicked me!");
+                })
+                .setPositiveButton("DISMISS")
+                .setOnDialogShowListener(dialog ->
+                        showMessage("Hello from onDialogShowListener!"))
+                .setOnDialogDismissListener((dialog, actionId, isCancelled) -> {
+                    String string = "";
+                    if(actionId == PrimeDialog.DISMISS_ACTION_INTERNAL){
+                        string = "INTERNAL";
+                    } else if(actionId == PrimeDialog.DISMISS_ACTION_BACK_PRESSED){
+                        string = "BACK_PRESSED";
+                    } else if(actionId == PrimeDialog.DISMISS_ACTION_CLICK_OUTSIDE){
+                        string = "OUTSIDE_CLICK";
+                    } else if(actionId == PrimeDialog.DISMISS_ACTION_POSITIVE_BUTTON){
+                        string = "POSITIVE_BUTTON";
+                    } else if(actionId == PrimeDialog.DISMISS_ACTION_NEGATIVE_BUTTON){
+                        string = "NEGATIVE_BUTTON";
+                    } else if(actionId == PrimeDialog.DISMISS_ACTION_NEUTRAL_BUTTON){
+                        string = "NEUTRAL_BUTTON";
+                    }
+                    showMessage(isCancelled ? "Cancelled - " + string : "Not cancelled - " + string);
+                })
+                .setDontShowAgain("Don't remind me again", onDontShowAgainListener)
+                .show();
+    }
+
+    void demoListenerDialog2() {
         new PrimeDialog(this)
                 .setDialogWidth(95)
                 .setHeaderBackgroundRes(R.drawable.header)

@@ -16,6 +16,7 @@ import android.graphics.drawable.LayerDrawable
 import android.os.Build
 import android.util.Log
 import android.util.TypedValue
+import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -57,8 +58,8 @@ import kotlin.run
 import kotlin.text.substring
 
 /**
- * PrimeDialog v1.0.1
- * Created by Ifedayo Bolade on May 11, 2026.
+ * PrimeDialog v1.0.0
+ * Created by Ifedayo Bolade on May 14, 2026.
  */
 
 class PrimeDialog
@@ -68,7 +69,8 @@ constructor(
     private var context: Context,
     styleRes: Int = R.style.DefaultDialogTheme
 ) {
-    private var actionID = CLICK_OUTSIDE
+    private var buttonActionId = CLICK_OUTSIDE
+    private var dismissActionId: Int? = null
     private var cornerRadius = 16
     private var dialogPadding = 0
     private var dayColor = "#FFFFFF".toColorInt()
@@ -756,7 +758,7 @@ constructor(
     }
 
     fun setMessageLayoutBackgroundRes(@ColorRes colorRes: Int): PrimeDialog {
-        return setMessageLayoutBackground(colorRes)
+        return setMessageLayoutBackground(getColor(colorRes))
     }
 
     /** Set the background color for the action layouts including
@@ -838,7 +840,10 @@ constructor(
     }
 
     private val defaultOnClickListener =
-        OnDialogButtonClickListener { dialog, _ -> dialog.dismiss() }
+        OnDialogButtonClickListener { dialog, _ ->
+            dismissActionId = DISMISS_ACTION_INTERNAL
+            dialog.dismiss()
+        }
 
     @JvmOverloads
     fun setPositiveButton(
@@ -864,7 +869,8 @@ constructor(
             }
             setOnClickListener {
                 onClickListener.onDialogButtonClick(this@PrimeDialog, POSITIVE_BUTTON)
-                actionID = POSITIVE_BUTTON
+                buttonActionId = POSITIVE_BUTTON
+                dismissActionId = DISMISS_ACTION_POSITIVE_BUTTON
             }
         }
         return this
@@ -894,7 +900,8 @@ constructor(
             }
             setOnClickListener {
                 onClickListener.onDialogButtonClick(this@PrimeDialog, NEGATIVE_BUTTON)
-                actionID = NEGATIVE_BUTTON
+                buttonActionId = NEGATIVE_BUTTON
+                dismissActionId = DISMISS_ACTION_NEGATIVE_BUTTON
             }
         }
         return this
@@ -924,7 +931,8 @@ constructor(
             }
             setOnClickListener {
                 onClickListener.onDialogButtonClick(this@PrimeDialog, NEUTRAL_BUTTON)
-                actionID = NEUTRAL_BUTTON
+                buttonActionId = NEUTRAL_BUTTON
+                dismissActionId = DISMISS_ACTION_NEUTRAL_BUTTON
             }
         }
         return this
@@ -1077,21 +1085,35 @@ constructor(
         return this
     }
 
+    private var isDialogCancelled: Boolean = false
+
     private var onDialogDismissListenerSet = false
+    private var onDialogDismissListener: OnDialogDismissListener? = null
     fun setOnDialogDismissListener(onDialogDismissListener: OnDialogDismissListener): PrimeDialog {
         onDialogDismissListenerSet = true
+        this.onDialogDismissListener = onDialogDismissListener
+        dialog.setOnKeyListener { _, actionId, _ ->
+            if(actionId == KeyEvent.KEYCODE_BACK)
+                dismissActionId = DISMISS_ACTION_BACK_PRESSED
+            false
+        }
         dialog.setOnDismissListener {
-            onDialogDismissListener.onDialogDismiss(this@PrimeDialog)
-            if (binding.checkBox.isChecked && dontShowAgainSet && onDontShowAgainListener != null) onDontShowAgainListener!!.onDismiss()
+            if(!isDialogCancelled){
+                dispatchDismissEvent(dismissActionId, false)
+            }
+        }
+        dialog.setOnCancelListener {
+            isDialogCancelled = true
+            dispatchDismissEvent(dismissActionId, true)
         }
         return this
     }
 
-    fun setOnDialogCancelListener(onDialogCancelListener: OnDialogCancelListener): PrimeDialog {
-        dialog.setOnCancelListener {
-            onDialogCancelListener.onDialogCancel(this)
+    private fun dispatchDismissEvent(actionId: Int?, isCancelled: Boolean){
+        onDialogDismissListener?.onDialogDismiss(this, actionId ?: DISMISS_ACTION_CLICK_OUTSIDE, isCancelled)
+        onDontShowAgainListener?.let {
+            if(binding.checkBox.isChecked && dontShowAgainSet) it.onDismiss()
         }
-        return this
     }
 
     private var dontShowLabel: String = "Don't show again"
@@ -1558,7 +1580,11 @@ constructor(
         })
     }
 
-    fun dismiss() { dialog.dismiss() }
+    fun dismiss() {
+        if(dismissActionId == null)
+            dismissActionId = DISMISS_ACTION_INTERNAL
+        dialog.dismiss()
+    }
 
     /** Execute an indirect action button click by passing the button id
      * to this function. Button id could be one of [POSITIVE_BUTTON],
@@ -1645,6 +1671,7 @@ constructor(
         return this
     }
 
+    /** A listener for action button click event. */
     fun interface OnDialogButtonClickListener {
         /** Action button click event.
          * @param dialog An instance of PrimeDialog
@@ -1656,35 +1683,32 @@ constructor(
         fun onDialogShow(dialog: PrimeDialog)
     }
 
+    /** Dialog dismiss event listener. */
     fun interface OnDialogDismissListener {
-        fun onDialogDismiss(dialog: PrimeDialog)
-    }
-
-    /** A cancel event occurs when dialog is dismissed in any way that
-     * does not involve a call to 'dismiss()'. Such as clicking outside
-     * the dialog.
-     * This still triggers [OnDialogDismissListener], but only after
-     * [OnDialogCancelListener]*/
-    fun interface OnDialogCancelListener {
-        fun onDialogCancel(dialog: PrimeDialog)
+        /**@param dialog The dismissed dialog.
+         * @param actionId The action that triggered the dismissal.
+         * @param isCancelled A dialog is 'canceled' when it is dismissed by an
+         * external action such as clicking outside the dialog window or pressing
+         * device BACK button. */
+        fun onDialogDismiss(dialog: PrimeDialog, actionId: Int, isCancelled: Boolean)
     }
 
     private var onDontShowAgainListener: OnDontShowAgainListener? = null
 
-    /** This listener is meant for 'Don't show again' action. */
+    /** This listener checks for 'Don't show again' event. */
     private interface DontShowAgainListener {
-        fun onBoxCheck(isChecked: Boolean)
         fun onDismiss()
+        fun onBoxCheck(isChecked: Boolean)
     }
 
-    /** This listener is meant for 'Don't show again' action. */
+    /** This listener checks for 'Don't show again' event. */
     open class OnDontShowAgainListener : DontShowAgainListener {
-        /** Fires whenever the checkbox is toggled. */
-        override fun onBoxCheck(isChecked: Boolean){}
-        /** This method will ONLY get called IF the 'Don't show again' checkbox is checked.
+        /** Fires ONLY when the 'Don't show again' checkbox is checked before dialog dismissal.
          * @author Write your logic for not showing the dialog again here. This could be
          * storing a Shared preference value or some other means. */
         override fun onDismiss(){}
+        /** Fires everytime the checkbox is toggled. */
+        override fun onBoxCheck(isChecked: Boolean){}
     }
 
     private val isNightModeActive: Boolean
@@ -1729,6 +1753,20 @@ constructor(
         var NEUTRAL_BUTTON: Int = 0
         @JvmField /** Signifies id for internal dismiss action. */
         var UNIDENTIFIED_BUTTON: Int = 0
+
+        @JvmField /** Dialog dismissed by a non-action button call to 'dismiss()'. */
+        var DISMISS_ACTION_INTERNAL: Int = 1411
+        @JvmField /** Dialog dismissed by user pressing BACK button on their device. */
+        var DISMISS_ACTION_BACK_PRESSED: Int = 1412
+        @JvmField /** Dialog dismissed by tapping outside dialog window. */
+        var DISMISS_ACTION_CLICK_OUTSIDE: Int = 1413
+        @JvmField /** Dialog dismissed by positive action button click or a call to 'dismiss()' at any point within the button click function. */
+        var DISMISS_ACTION_POSITIVE_BUTTON: Int = 1414
+        @JvmField /** Dialog dismissed by negative action button click or a call to 'dismiss()' at any point within the button click function. */
+        var DISMISS_ACTION_NEGATIVE_BUTTON: Int = 1415
+        @JvmField /** Dialog dismissed by neutral action button click or a call to 'dismiss()' at any point within the button click function. */
+        var DISMISS_ACTION_NEUTRAL_BUTTON: Int = 1416
+
         val TYPEFACE_SERIF_BOLD = Typeface.create("serif", Typeface.BOLD)
         val TYPEFACE_SERIF_NORMAL = Typeface.create("serif", Typeface.NORMAL)
         val TYPEFACE_SERIF_MONOSPACE = Typeface.create("serif-monospace", Typeface.BOLD)
