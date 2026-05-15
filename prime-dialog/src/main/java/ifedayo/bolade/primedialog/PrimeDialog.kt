@@ -74,7 +74,7 @@ constructor(
     private var cornerRadius = 16
     private var dialogPadding = 0
     private var dayColor = "#FFFFFF".toColorInt()
-    private var nightColor = "#131316".toColorInt()
+    private var nightColor = "#151519".toColorInt()
     private var isCustomView = false
     private var dontShowAgainSet = false
     private var isActionButtonSet = false
