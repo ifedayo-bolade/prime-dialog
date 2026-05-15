@@ -59,7 +59,7 @@ import kotlin.text.substring
 
 /**
  * PrimeDialog v1.0.1
- * Created by Ifedayo Bolade on May 14, 2026.
+ * Created by Ifedayo Bolade on May 15, 2026.
  */
 
 class PrimeDialog
@@ -1708,6 +1708,7 @@ constructor(
          * @author Write your logic for not showing the dialog again here. This could be
          * storing a Shared preference value or some other means. */
         fun onDismiss()
+        /** Fires everytime the checkbox is toggled. */
         fun onBoxCheck(isChecked: Boolean)
     }
 
