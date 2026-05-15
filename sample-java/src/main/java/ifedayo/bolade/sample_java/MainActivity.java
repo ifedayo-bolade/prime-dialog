@@ -213,6 +213,7 @@ public class MainActivity extends AppCompatActivity {
                     showMessage(isCancelled ? "Cancelled - " + string : "Not cancelled - " + string);
                 })
                 .setDontShowAgain("Don't remind me again", onDontShowAgainListener)
+                .setDontShowAgainColorRes(R.color.colorGreen)
                 .show();
     }
 

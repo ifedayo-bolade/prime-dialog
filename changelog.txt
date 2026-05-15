@@ -1,5 +1,6 @@
 (v1.0.0)
-- Initial release
+- Initial release.
 
 (v1.0.1)
-- Fixed title typeface not applied
+- Fixed title typeface not applied.
+- Added 'setDontShowAgainColor()' and 'setDontShowAgainColorRes()'.

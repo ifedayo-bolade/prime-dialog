@@ -76,7 +76,6 @@ constructor(
     private var dayColor = "#FFFFFF".toColorInt()
     private var nightColor = "#151519".toColorInt()
     private var isCustomView = false
-    private var dontShowAgainSet = false
     private var isActionButtonSet = false
     private val dialog: Dialog
     private var headerLayout: RelativeLayout
@@ -98,6 +97,7 @@ constructor(
     private var iconAttributes: IconAttributes = IconAttributes()
     private var titleAttributes: TitleAttributes = TitleAttributes()
     private var messageAttributes: MessageAttributes = MessageAttributes()
+    private var checkboxAttributes: CheckboxAttributes = CheckboxAttributes()
 
     private val TAG = "PrimeDialog"
 
@@ -127,6 +127,12 @@ constructor(
 
     private data class MessageAttributes(
         var isMarginSet: Boolean = false
+    )
+
+    private data class CheckboxAttributes(
+        var color: Int? = null,
+        var label: String = "Don't show again",
+        var isDontShowAgainSet: Boolean = false
     )
 
     init {
@@ -1111,11 +1117,10 @@ constructor(
     private fun dispatchDismissEvent(actionId: Int?, isCancelled: Boolean){
         onDialogDismissListener?.onDialogDismiss(this, actionId ?: DISMISS_ACTION_CLICK_OUTSIDE, isCancelled)
         onDontShowAgainListener?.let {
-            if(binding.checkBox.isChecked && dontShowAgainSet) it.onDismiss()
+            if(binding.checkBox.isChecked && checkboxAttributes.isDontShowAgainSet) it.onDismiss()
         }
     }
 
-    private var dontShowLabel: String = "Don't show again"
 
     @JvmOverloads
     /** A checkbox will be shown on this dialog with the provided 'Don't show again' label.
@@ -1123,11 +1128,24 @@ constructor(
      * @param onDontShowAgainListener The listener to govern your 'Don't show again'
      * logic.
      */
-    fun setDontShowAgain(label: String = dontShowLabel, onDontShowAgainListener: OnDontShowAgainListener?): PrimeDialog {
-        dontShowLabel = label
-        dontShowAgainSet = true
+    fun setDontShowAgain(label: String = checkboxAttributes.label, onDontShowAgainListener: OnDontShowAgainListener?): PrimeDialog {
+        checkboxAttributes.label = label
+        checkboxAttributes.isDontShowAgainSet = true
         this.onDontShowAgainListener = onDontShowAgainListener
         return this
+    }
+
+    /** Sets 'Don't show again' checkbox color.
+     * @param colorInt The color to paint the checkbox. */
+    fun setDontShowAgainColor(@ColorInt colorInt: Int): PrimeDialog {
+        checkboxAttributes.color = getColor(colorInt)
+        return this
+    }
+
+    /** Sets 'Don't show again' checkbox color.
+     * @param colorRes The color resource to apply on the checkbox. */
+    fun setDontShowAgainColorRes(@ColorRes colorRes: Int): PrimeDialog {
+        return setDontShowAgainColor(getColor(colorRes))
     }
 
     private var colorAccent = getDefaultAccentColor()
@@ -1374,20 +1392,21 @@ constructor(
             setRoundedCorners()
 
         val isNightMode = isNightModeActive
-        if (dontShowAgainSet) {
+        if (checkboxAttributes.isDontShowAgainSet) {
             binding.actionLayout.isVisible = true
             binding.dontShowAgainLayout.isVisible = true
             binding.checkBox.apply {
                 setOnCheckedChangeListener { _, isChecked ->
                     onDontShowAgainListener?.onBoxCheck(isChecked)
                 }
+                val color = checkboxAttributes.color ?: colorAccent
                 CompoundButtonCompat.setButtonTintList(
                     this,
-                    ColorStateList.valueOf(colorAccent)
+                    ColorStateList.valueOf(color)
                 )
                 val textColor = if (isNightMode) Color.WHITE else Color.BLACK
                 setTextColor(textColor)
-                text = dontShowLabel
+                text = checkboxAttributes.label
             }
         }
 
@@ -1432,7 +1451,7 @@ constructor(
                 // Apply a top margin of 4dp to 'actionLayout' if 'Don't show again' is in use.
                 val actionLayoutParams = actionLayout.layoutParams as? RelativeLayout.LayoutParams
                 actionLayoutParams?.apply {
-                    topMargin = toDP(if(dontShowAgainSet) 4 else 0)
+                    topMargin = toDP(if(checkboxAttributes.isDontShowAgainSet) 4 else 0)
                 }
 
                 if(message.text.isNotEmpty() && !messageAttributes.isMarginSet) {
@@ -1448,7 +1467,7 @@ constructor(
 
             // Remove the default 4dp top margin on button layout when both the layout
             // and 'Don't show again' layout are both in use, so they don't feel too apart.
-            if(dontShowAgainSet && isActionButtonSet){
+            if(checkboxAttributes.isDontShowAgainSet && isActionButtonSet){
                 val buttonLayoutParams = buttonLayout.layoutParams as? FrameLayout.LayoutParams
                 buttonLayoutParams?.topMargin = toDP(0)
             }
@@ -1547,7 +1566,7 @@ constructor(
         } else {
             dialog.show()
         }
-        if (!onDialogDismissListenerSet && dontShowAgainSet) {
+        if (!onDialogDismissListenerSet && checkboxAttributes.isDontShowAgainSet) {
             dialog.setOnDismissListener {
                 if (binding.checkBox.isChecked && onDontShowAgainListener != null) onDontShowAgainListener!!.onDismiss()
             }

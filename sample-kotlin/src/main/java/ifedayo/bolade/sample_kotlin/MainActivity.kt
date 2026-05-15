@@ -207,6 +207,7 @@ class MainActivity : AppCompatActivity() {
                 showMessage(if (isCancelled) "Cancelled - $string" else "Not cancelled - $string")
             }
             .setDontShowAgain("Don't remind me again", onDontShowAgainListener)
+            .setDontShowAgainColorRes(R.color.colorGreen)
             .show()
     }
 
