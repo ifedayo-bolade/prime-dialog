@@ -1704,16 +1704,15 @@ constructor(
 
     /** This listener checks for 'Don't show again' event. */
     private interface DontShowAgainListener {
+        /** Fires ONLY when the 'Don't show again' checkbox is checked before dialog dismissal.
+         * @author Write your logic for not showing the dialog again here. This could be
+         * storing a Shared preference value or some other means. */
         fun onDismiss()
         fun onBoxCheck(isChecked: Boolean)
     }
 
     /** This listener checks for 'Don't show again' event. */
-    open class OnDontShowAgainListener : DontShowAgainListener {
-        /** Fires ONLY when the 'Don't show again' checkbox is checked before dialog dismissal.
-         * @author Write your logic for not showing the dialog again here. This could be
-         * storing a Shared preference value or some other means. */
-        override fun onDismiss(){}
+    abstract class OnDontShowAgainListener : DontShowAgainListener {
         /** Fires everytime the checkbox is toggled. */
         override fun onBoxCheck(isChecked: Boolean){}
     }

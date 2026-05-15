@@ -293,6 +293,14 @@ public class MainActivity extends AppCompatActivity {
         showMessage("Please click the login button");
     }
 
+    private final PrimeDialog.OnDontShowAgainListener listener = new PrimeDialog.OnDontShowAgainListener(){
+
+        @Override
+        public void onDismiss() {
+
+        }
+    };
+
     private final PrimeDialog.OnDontShowAgainListener onDontShowAgainListener = new PrimeDialog.OnDontShowAgainListener() {
         @Override
         public void onBoxCheck(boolean isChecked) {
