@@ -456,7 +456,6 @@ constructor(
                 )
             }
         }
-        titleAttributes.typeface = TYPEFACE_SANS_SERIF_MEDIUM_BOLD
         return title as AppCompatTextView
     }
 
@@ -472,15 +471,8 @@ constructor(
 
     @JvmOverloads
     fun setTitleTypefaceRes(@FontRes fontRes: Int, style: Int = Typeface.NORMAL): PrimeDialog {
-        try {
-            val typeface = ResourcesCompat.getFont(context, fontRes) ?: Typeface.DEFAULT
-            return setTitleTypeface(typeface, style)
-        } catch (e: Exception) {
-            val message = "Font resource not found: $fontRes"
-            Log.i(TAG, message)
-            showDebugToast(message)
-        }
-        return this
+        val typeface = ResourcesCompat.getFont(context, fontRes) ?: TYPEFACE_SANS_SERIF_MEDIUM_BOLD
+        return setTitleTypeface(typeface, style)
     }
 
     @JvmOverloads
