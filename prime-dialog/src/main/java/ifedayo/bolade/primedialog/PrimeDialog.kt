@@ -1658,18 +1658,18 @@ constructor(
         val insetDrawable = InsetDrawable(gradientDrawable, toDP(dialogPaddingDp))
         val layerDrawable = LayerDrawable(arrayOf<Drawable>(insetDrawable))
         dialog.window?.setBackgroundDrawable(layerDrawable)
-        removeRoundedCorners()
         isCornerRadiusSet = true
-        setBackgroundColor(backgroundColor)
         cornerRadius = cornerRadiusDp
         dialogPadding = dialogPaddingDp
+        isDefaultCornersEnabled = false
+        setBackgroundColor(backgroundColor)
         return this
     }
 
     /**
      * Disables dialog's default rounded corners, this function will be ignored if any of the
      * parameter specific variant of [setRoundedCorners] is called. After calling this function,
-     * any subsequent call to [setRoundedCorners] should explicitly specific the new corner
+     * any subsequent call to [setRoundedCorners] should explicitly specific a new corner
      * radius value.
      */
     fun removeRoundedCorners(): PrimeDialog {
