@@ -16,8 +16,6 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -193,6 +191,9 @@ public class MainActivity extends AppCompatActivity {
                     showMessage("You clicked me!");
                 })
                 .setPositiveButton("DISMISS")
+//                .setWindowAnimation(PrimeDialog.WINDOW_ANIMATION_FADE)
+                .setWindowAnimation(PrimeDialog.WINDOW_ANIMATION_FLASH)
+                .setWindowAnimationEnabled(false)
                 .setOnDialogShowListener(dialog ->
                         showMessage("Hello from onDialogShowListener!"))
                 .setOnDialogDismissListener((dialog, actionId, isCancelled) -> {

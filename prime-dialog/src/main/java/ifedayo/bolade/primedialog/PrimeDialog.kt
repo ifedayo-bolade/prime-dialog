@@ -92,7 +92,7 @@ constructor(
     private var positiveButtonTextView: AppCompatTextView? = null
     private var negativeButtonTextView: AppCompatTextView? = null
     private var neutralButtonTextView: AppCompatTextView? = null
-    private var windowAnimationStyleRes = R.style.WindowAnimationStyle
+    private var windowAnimationStyleRes = WINDOW_ANIMATION_SLIDE
 
     private var iconAttributes: IconAttributes = IconAttributes()
     private var titleAttributes: TitleAttributes = TitleAttributes()
@@ -221,7 +221,9 @@ constructor(
 
     /** Sets an ENTER and/or EXIT animation for the dialog window.
      * @param styleRes The style resource id containing the animation attributes.
-     * @see [setWindowAnimationEnabled]*/
+     * Built-in options includes [WINDOW_ANIMATION_FADE] and [WINDOW_ANIMATION_SLIDE]
+     * @see [setWindowAnimationEnabled]
+     * @sample */
     fun setWindowAnimation(@StyleRes styleRes: Int): PrimeDialog {
         this.windowAnimationStyleRes = styleRes
         dialog.window?.attributes?.windowAnimations = styleRes
@@ -1771,6 +1773,13 @@ constructor(
         var NEUTRAL_BUTTON: Int = 0
         @JvmField /** Signifies id for internal dismiss action. */
         var UNIDENTIFIED_BUTTON: Int = 0
+
+        @JvmField /** Dialog window fade in/out animation style resource id. */
+        var WINDOW_ANIMATION_FADE = R.style.Fade
+        @JvmField /** Dialog window fade in/out animation style resource id. */
+        var WINDOW_ANIMATION_FLASH = R.style.Flash
+        @JvmField /** Dialog window slide in/out animation style resource id. */
+        var WINDOW_ANIMATION_SLIDE = R.style.Slide
 
         @JvmField /** Dialog dismissed by a non-action button call to 'dismiss()'. */
         var DISMISS_ACTION_INTERNAL: Int = 1411
