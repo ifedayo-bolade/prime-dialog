@@ -1,22 +1,18 @@
 import org.gradle.api.publish.maven.MavenPublication
 
 plugins {
+    alias(libs.plugins.maven.publish)
     alias(libs.plugins.android.library)
-    id("maven-publish")
 }
 
 android {
     namespace = "ifedayo.bolade.primedialog"
-    compileSdk {
-        version = release(36) {
-            minorApiLevel = 1
-        }
-    }
+    compileSdk = 37
 
     defaultConfig {
         minSdk = 23
 
-        testInstrumentationRunner = "android.support.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
     }
     compileOptions {
@@ -44,6 +40,12 @@ publishing {
 
             afterEvaluate {
                 from(components["release"])
+            }
+
+            pom {
+                name.set("PrimeDialog")
+                description.set("A highly customizable Android dialog library.")
+                url.set("https://github.com/ifedayo-bolade/PrimeDialog")
             }
         }
     }

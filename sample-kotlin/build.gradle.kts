@@ -4,11 +4,7 @@ plugins {
 
 android {
     namespace = "ifedayo.bolade.sample_kotlin"
-    compileSdk {
-        version = release(36) {
-            minorApiLevel = 1
-        }
-    }
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "ifedayo.bolade.sample_kotlin"
