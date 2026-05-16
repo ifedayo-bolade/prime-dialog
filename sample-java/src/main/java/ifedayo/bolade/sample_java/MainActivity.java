@@ -191,9 +191,7 @@ public class MainActivity extends AppCompatActivity {
                     showMessage("You clicked me!");
                 })
                 .setPositiveButton("DISMISS")
-//                .setWindowAnimation(PrimeDialog.WINDOW_ANIMATION_FADE)
-                .setWindowAnimation(PrimeDialog.WINDOW_ANIMATION_FLASH)
-                .setWindowAnimationEnabled(false)
+                .setWindowAnimation(PrimeDialog.WINDOW_ANIMATION_FADE)
                 .setOnDialogShowListener(dialog ->
                         showMessage("Hello from onDialogShowListener!"))
                 .setOnDialogDismissListener((dialog, actionId, isCancelled) -> {
@@ -257,7 +255,6 @@ public class MainActivity extends AppCompatActivity {
                 .setDialogWidth(100) // Optional
                 .setDialogHeight(100, true) // Optional
                 .setScreenDimLevel(0.0f) // Optional
-                .setWindowAnimationEnabled(false) // Optional
                 .removeRoundedCorners() // Optional
 
                 .show();

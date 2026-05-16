@@ -59,7 +59,7 @@ import kotlin.text.substring
 
 /**
  * PrimeDialog v1.0.1
- * Created by Ifedayo Bolade on May 15, 2026.
+ * Created by Ifedayo Bolade on May 16, 2026.
  */
 
 class PrimeDialog
@@ -92,7 +92,7 @@ constructor(
     private var positiveButtonTextView: AppCompatTextView? = null
     private var negativeButtonTextView: AppCompatTextView? = null
     private var neutralButtonTextView: AppCompatTextView? = null
-    private var windowAnimationStyleRes = WINDOW_ANIMATION_SLIDE
+    private var windowAnimationStyleRes = R.style.Flash
 
     private var iconAttributes: IconAttributes = IconAttributes()
     private var titleAttributes: TitleAttributes = TitleAttributes()
@@ -141,7 +141,6 @@ constructor(
         dialog = Dialog(context, styleRes)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.setContentView(binding.root)
-        setWindowAnimationEnabled(true)
 
         // Initialize views
         headerLayout = binding.header
@@ -221,24 +220,11 @@ constructor(
 
     /** Sets an ENTER and/or EXIT animation for the dialog window.
      * @param styleRes The style resource id containing the animation attributes.
-     * Built-in options includes [WINDOW_ANIMATION_FADE] and [WINDOW_ANIMATION_SLIDE]
-     * @see [setWindowAnimationEnabled]
-     * @sample */
+     * Built-in options includes [WINDOW_ANIMATION_FADE] and [WINDOW_ANIMATION_SLIDE] */
     fun setWindowAnimation(@StyleRes styleRes: Int): PrimeDialog {
         this.windowAnimationStyleRes = styleRes
         dialog.window?.attributes?.windowAnimations = styleRes
         return this
-    }
-
-    /** Sets whether the default dialog window ENTER and/or EXIT animations should
-     * be enabled or not.
-     * @param isEnabled Animation is enabled when 'true' and disabled with 'false'.
-     * @author A call to [setWindowAnimation] will automatically override the
-     * dialog's default animation, and set the new animation style in motion.
-     *
-     * @see [setWindowAnimation]*/
-    fun setWindowAnimationEnabled(isEnabled: Boolean): PrimeDialog {
-        return setWindowAnimation(if(isEnabled) windowAnimationStyleRes else 0)
     }
 
     /** Indicates that a header background or color has been set. */
@@ -1776,8 +1762,6 @@ constructor(
 
         @JvmField /** Dialog window fade in/out animation style resource id. */
         var WINDOW_ANIMATION_FADE = R.style.Fade
-        @JvmField /** Dialog window fade in/out animation style resource id. */
-        var WINDOW_ANIMATION_FLASH = R.style.Flash
         @JvmField /** Dialog window slide in/out animation style resource id. */
         var WINDOW_ANIMATION_SLIDE = R.style.Slide
 

@@ -192,6 +192,7 @@ class MainActivity : AppCompatActivity() {
                 showMessage("You clicked me!")
             }
             .setPositiveButton("DISMISS")
+            .setWindowAnimation(PrimeDialog.WINDOW_ANIMATION_SLIDE)
             .setOnDialogShowListener { _: PrimeDialog ->
                 showMessage("Hello from onDialogShowListener!") }
             .setOnDialogDismissListener { _: PrimeDialog, actionId: Int, isCancelled: Boolean ->
@@ -251,7 +252,6 @@ class MainActivity : AppCompatActivity() {
             .setDialogWidth(100) // Optional
             .setDialogHeight(100, true) // Optional
             .setScreenDimLevel(0.0f) // Optional
-            .setWindowAnimationEnabled(false) // Optional
             .removeRoundedCorners() // Optional
 
             .show()

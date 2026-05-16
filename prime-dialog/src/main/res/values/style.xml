@@ -2,12 +2,13 @@
 <resources>
     <style name="DefaultDialogTheme" parent="Theme.AppCompat.Dialog.Alert">
         <item name="android:windowNoTitle">true</item>
+        <item name="android:windowActionBar">false</item>
         <item name="android:windowIsFloating">true</item>
     </style>
 
     <style name="Flash" parent="DefaultDialogTheme">
-        <item name="android:windowEnterAnimation">@anim/dialog_fast_fade_in</item>
-        <item name="android:windowExitAnimation">@anim/dialog_fast_fade_out</item>
+        <item name="android:windowEnterAnimation">@anim/dialog_flash_fade_in</item>
+        <item name="android:windowExitAnimation">@anim/dialog_flash_fade_out</item>
     </style>
 
     <style name="Fade" parent="DefaultDialogTheme">
