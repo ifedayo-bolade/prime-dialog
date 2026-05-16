@@ -117,8 +117,8 @@ constructor(
         var text: CharSequence? = null,
         var color: Int? = null,
         var size: Float = 21F,
-        var typeface: Typeface = TYPEFACE_SANS_SERIF_MEDIUM_BOLD,
-        var typefaceStyle: Int = Typeface.NORMAL,
+        var typeface: Typeface = TYPEFACE_SANS_SERIF_MEDIUM,
+        var typefaceStyle: Int = Typeface.BOLD,
         var isTitleSet: Boolean = false,
         var letterSpacing: Float? = null,
         var animation: Animation? = null,
@@ -466,13 +466,13 @@ constructor(
     }
 
     @JvmOverloads
-    fun setTitleTypefaceRes(@FontRes fontRes: Int, style: Int = Typeface.NORMAL): PrimeDialog {
-        val typeface = ResourcesCompat.getFont(context, fontRes) ?: TYPEFACE_SANS_SERIF_MEDIUM_BOLD
+    fun setTitleTypefaceRes(@FontRes fontRes: Int, style: Int = Typeface.BOLD): PrimeDialog {
+        val typeface = ResourcesCompat.getFont(context, fontRes) ?: TYPEFACE_SANS_SERIF_MEDIUM
         return setTitleTypeface(typeface, style)
     }
 
     @JvmOverloads
-    fun setTitleTypeface(typeface: Typeface, style: Int = Typeface.NORMAL): PrimeDialog {
+    fun setTitleTypeface(typeface: Typeface, style: Int = Typeface.BOLD): PrimeDialog {
         titleAttributes.typeface = typeface
         titleAttributes.typefaceStyle = style
         return this
@@ -1747,20 +1747,16 @@ constructor(
         @JvmField
         var ACCENT_MODE_ALL: Int = 3
 
-        @JvmField
-        var MATCH_PARENT: Int = ViewGroup.LayoutParams.MATCH_PARENT
-        @JvmField
-        var WRAP_CONTENT: Int = ViewGroup.LayoutParams.WRAP_CONTENT
+        private const val DEFAULT_ANIMATION_DURATION: Long = -11
+
         @JvmField
         var CLICK_OUTSIDE: Int = 0
-        @JvmField /** Positive action button layout id*/
+        @JvmField /** Positive action button layout id. */
         var POSITIVE_BUTTON: Int = 0
-        @JvmField /** Negative action button layout id*/
+        @JvmField /** Negative action button layout id. */
         var NEGATIVE_BUTTON: Int = 0
-        @JvmField /** Neutral action button layout id*/
+        @JvmField /** Neutral action button layout id. */
         var NEUTRAL_BUTTON: Int = 0
-        @JvmField /** Signifies id for internal dismiss action. */
-        var UNIDENTIFIED_BUTTON: Int = 0
 
         @JvmField /** Dialog window fade in/out animation style resource id. */
         var WINDOW_ANIMATION_FADE = R.style.Fade
@@ -1782,23 +1778,15 @@ constructor(
         @JvmField /** Dialog dismissed by neutral action button click or a call to 'dismiss()' at any point within the button click function. */
         var DISMISS_ACTION_NEUTRAL_BUTTON: Int = 1416
 
-        val TYPEFACE_SERIF_BOLD = Typeface.create("serif", Typeface.BOLD)
-        val TYPEFACE_SERIF_NORMAL = Typeface.create("serif", Typeface.NORMAL)
-        val TYPEFACE_SERIF_MONOSPACE = Typeface.create("serif-monospace", Typeface.BOLD)
-        val TYPEFACE_SANS_SERIF_MEDIUM_BOLD = Typeface.create("sans-serif-medium", Typeface.BOLD)
-        val TYPEFACE_SANS_SERIF_MEDIUM_NORMAL =
-            Typeface.create("sans-serif-medium", Typeface.NORMAL)
-        val TYPEFACE_SANS_SERIF_REGULAR_BOLD = Typeface.create("sans-serif", Typeface.BOLD)
-        val TYPEFACE_SANS_SERIF_REGULAR_NORMAL = Typeface.create("sans-serif", Typeface.NORMAL)
-        val TYPEFACE_SANS_SERIF_CONDENSED_BOLD =
-            Typeface.create("sans-serif-condensed", Typeface.BOLD)
-        val TYPEFACE_SANS_SERIF_CONDENSED_NORMAL =
-            Typeface.create("sans-serif-condensed", Typeface.NORMAL)
-        const val DEFAULT_ANIMATION_DURATION: Long = -11
-
-        /** Converts a regular int dimension value to dp*/
-        fun toDP(context: Context, dpValue: Int): Int {
-            return (dpValue * context.resources.displayMetrics.density + 0.5).toInt()
-        }
+        @JvmField
+        val TYPEFACE_SERIF = Typeface.create("serif", Typeface.NORMAL)
+        @JvmField
+        val TYPEFACE_SANS_SERIF = Typeface.create("sans-serif", Typeface.NORMAL)
+        @JvmField
+        val TYPEFACE_SERIF_MONOSPACE = Typeface.create("serif-monospace", Typeface.NORMAL)
+        @JvmField
+        val TYPEFACE_SANS_SERIF_MEDIUM = Typeface.create("sans-serif-medium", Typeface.NORMAL)
+        @JvmField
+        val TYPEFACE_SANS_SERIF_CONDENSED = Typeface.create("sans-serif-condensed", Typeface.NORMAL)
     }
 }

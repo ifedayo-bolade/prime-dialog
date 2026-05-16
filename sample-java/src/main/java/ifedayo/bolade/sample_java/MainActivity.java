@@ -65,8 +65,8 @@ public class MainActivity extends AppCompatActivity {
                 .setMessage("I'm PrimeDialog, nice to meet you.")
                 .setNegativeButton("DISMISS")
                 .setPositiveButton("I SEE YOU", (dialog, buttonId) -> {
-                    showMessage("I see you too!");
                     dialog.dismiss();
+                    showMessage("I see you too!");
                 }).show();
     }
 
