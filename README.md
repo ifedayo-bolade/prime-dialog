@@ -16,12 +16,12 @@ A modern and highly customizable Android dialog library with animations, custom 
 - Lightweight and easy to integrate
 
 
-<img width="250" height="482" alt="1" src="https://github.com/user-attachments/assets/da41def2-8e2f-4124-b9fb-9ff254d5b4b8" />
-<img width="250" height="482" alt="2" src="https://github.com/user-attachments/assets/0a9f7d15-6baf-4616-8eec-7d78d3fd0f12" />
-<img width="250" height="482" alt="3" src="https://github.com/user-attachments/assets/5cf0dd72-c9aa-426b-9824-39a03ade6fce" />
-<img width="250" height="482" alt="4" src="https://github.com/user-attachments/assets/c99ba32f-e43d-4de5-9375-1ccf9633a2a2" />
-<img width="250" height="482" alt="5" src="https://github.com/user-attachments/assets/1326f8cb-c271-4891-8a41-2d171406f8a9" />
-<img width="250" height="482" alt="6" src="https://github.com/user-attachments/assets/77d6c5c4-47c9-4d72-a72f-c76867a47793" />
+<img width="200" height="385" alt="1" src="https://github.com/user-attachments/assets/da41def2-8e2f-4124-b9fb-9ff254d5b4b8" />
+<img width="200" height="385" alt="2" src="https://github.com/user-attachments/assets/0a9f7d15-6baf-4616-8eec-7d78d3fd0f12" />
+<img width="200" height="385" alt="3" src="https://github.com/user-attachments/assets/5cf0dd72-c9aa-426b-9824-39a03ade6fce" />
+<img width="200" height="385" alt="4" src="https://github.com/user-attachments/assets/c99ba32f-e43d-4de5-9375-1ccf9633a2a2" />
+<img width="200" height="385" alt="5" src="https://github.com/user-attachments/assets/1326f8cb-c271-4891-8a41-2d171406f8a9" />
+<img width="200" height="385" alt="6" src="https://github.com/user-attachments/assets/77d6c5c4-47c9-4d72-a72f-c76867a47793" />
 
 
 ## 📦 INTEGRATION
@@ -60,23 +60,25 @@ dependencies {
 ```kotlin
 PrimeDialog(this)
     .setIcon(R.drawable.ic_info)
-    .setTitle("PrimeDialog")
-    .setMessage("A beautiful customizable Android dialog library.")
-    .setPositiveButton("OK")
-    .setNegativeButton("Cancel")
-    .show()
+    .setTitle("HELLO WORLD!")
+    .setMessage("I'm PrimeDialog, nice to meet you.")
+    .setNegativeButton("CANCEL")
+    .setPositiveButton("I SEE YOU") { dialog: PrimeDialog, _ ->
+        dialog.dismiss()
+        Toast.makeText(this, "I see you too!", Toast.LENGTH_SHORT).show()
+    }.show()
 ```
-
----
 
 #### Java
 
 ```java
 new PrimeDialog(this)
-        .setIcon(R.drawable.ic_info)
-        .setTitle("PrimeDialog")
-        .setMessage("A beautiful customizable Android dialog library.")
-        .setPositiveButton("OK")
-        .setNegativeButton("Cancel")
-        .show();
+    .setIcon(R.drawable.ic_info)
+    .setTitle("HELLO WORLD!")
+    .setMessage("I'm PrimeDialog, nice to meet you.")
+    .setNegativeButton("CANCEL")
+    .setPositiveButton("I SEE YOU", (dialog, buttonId) -> {
+        dialog.dismiss();
+        Toast.makeText(this, "I see you too!", Toast.LENGTH_SHORT).show();
+    }).show();
 ```
