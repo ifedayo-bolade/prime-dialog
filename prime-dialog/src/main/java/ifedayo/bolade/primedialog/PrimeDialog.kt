@@ -92,7 +92,6 @@ constructor(
     private var positiveButtonTextView: AppCompatTextView? = null
     private var negativeButtonTextView: AppCompatTextView? = null
     private var neutralButtonTextView: AppCompatTextView? = null
-    private var windowAnimationStyleRes = WINDOW_ANIMATION_FLASH
 
     private var iconAttributes: IconAttributes = IconAttributes()
     private var titleAttributes: TitleAttributes = TitleAttributes()
@@ -141,6 +140,7 @@ constructor(
         dialog = Dialog(context, styleRes)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.setContentView(binding.root)
+        setWindowAnimation(WINDOW_ANIMATION_FLASH)
 
         // Initialize views
         headerLayout = binding.header
@@ -224,7 +224,6 @@ constructor(
      * Built-in options includes [WINDOW_ANIMATION_FADE], [WINDOW_ANIMATION_FLASH]
      * and [WINDOW_ANIMATION_SLIDE]. Pass in '0' to disable window animation altogether. */
     fun setWindowAnimation(@StyleRes styleRes: Int): PrimeDialog {
-        this.windowAnimationStyleRes = styleRes
         dialog.window?.attributes?.windowAnimations = styleRes
         return this
     }
@@ -232,7 +231,7 @@ constructor(
     /** Indicates that a header background or color has been set. */
     private var isHeaderShown: Boolean = false
 
-    /** Indicates that a header related functions has been called. */
+    /** Indicates that a header-related function has been called. */
     private var isHeaderConfiguring = false
 
     @JvmOverloads
