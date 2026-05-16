@@ -6,6 +6,8 @@
 - Added 'setDontShowAgainColor()' and 'setDontShowAgainColorRes()'.
 - Added built-in window animation style resources:
     'PrimeDialog.WINDOW_ANIMATION_FADE'
+    'PrimeDialog.WINDOW_ANIMATION_FLASH' -> (Active as Default)
     'PrimeDialog.WINDOW_ANIMATION_SLIDE'
 to be used with 'setWindowAnimation(styleRes)'.
 - Removed 'setWindowAnimationEnabled(boolean)'
+- Removed unused resources
