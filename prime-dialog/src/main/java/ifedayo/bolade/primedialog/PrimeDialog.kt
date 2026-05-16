@@ -92,7 +92,7 @@ constructor(
     private var positiveButtonTextView: AppCompatTextView? = null
     private var negativeButtonTextView: AppCompatTextView? = null
     private var neutralButtonTextView: AppCompatTextView? = null
-    private var windowAnimationStyleRes = R.style.Flash
+    private var windowAnimationStyleRes = WINDOW_ANIMATION_FLASH
 
     private var iconAttributes: IconAttributes = IconAttributes()
     private var titleAttributes: TitleAttributes = TitleAttributes()
@@ -218,9 +218,11 @@ constructor(
         return customView
     }
 
-    /** Sets an ENTER and/or EXIT animation for the dialog window.
+    /** Sets an ENTER and/or EXIT animation for the dialog window. Default is
+     * [WINDOW_ANIMATION_FLASH].
      * @param styleRes The style resource id containing the animation attributes.
-     * Built-in options includes [WINDOW_ANIMATION_FADE] and [WINDOW_ANIMATION_SLIDE] */
+     * Built-in options includes [WINDOW_ANIMATION_FADE], [WINDOW_ANIMATION_FLASH]
+     * and [WINDOW_ANIMATION_SLIDE]. Pass in '0' to disable window animation altogether. */
     fun setWindowAnimation(@StyleRes styleRes: Int): PrimeDialog {
         this.windowAnimationStyleRes = styleRes
         dialog.window?.attributes?.windowAnimations = styleRes
@@ -1762,6 +1764,8 @@ constructor(
 
         @JvmField /** Dialog window fade in/out animation style resource id. */
         var WINDOW_ANIMATION_FADE = R.style.Fade
+        @JvmField /** Dialog window flash in/out animation style resource id. */
+        var WINDOW_ANIMATION_FLASH = R.style.Flash
         @JvmField /** Dialog window slide in/out animation style resource id. */
         var WINDOW_ANIMATION_SLIDE = R.style.Slide
 
