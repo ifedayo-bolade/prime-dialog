@@ -1758,11 +1758,11 @@ constructor(
         var NEUTRAL_BUTTON: Int = 0
 
         @JvmField /** Dialog window fade in/out animation style resource id. */
-        var WINDOW_ANIMATION_FADE = R.style.Fade
+        var WINDOW_ANIMATION_FADE = R.style.FadeAnimation
         @JvmField /** Dialog window flash in/out animation style resource id. */
-        var WINDOW_ANIMATION_FLASH = R.style.Flash
+        var WINDOW_ANIMATION_FLASH = R.style.FlashAnimation
         @JvmField /** Dialog window slide in/out animation style resource id. */
-        var WINDOW_ANIMATION_SLIDE = R.style.Slide
+        var WINDOW_ANIMATION_SLIDE = R.style.SlideAnimation
 
         @JvmField /** Dialog dismissed by a non-action button call to 'dismiss()'. */
         var DISMISS_ACTION_INTERNAL: Int = 1411
