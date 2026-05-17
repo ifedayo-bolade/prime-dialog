@@ -39,7 +39,6 @@ public class SampleAdapter extends RecyclerView.Adapter<SampleAdapter.SampleView
     }
 
     public class SampleViewHolder extends RecyclerView.ViewHolder {
-
         TextView textView = itemView.findViewById(R.id.textView);
 
         public SampleViewHolder(@NonNull View itemView) {
