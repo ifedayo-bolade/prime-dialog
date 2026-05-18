@@ -58,8 +58,8 @@ import kotlin.run
 import kotlin.text.substring
 
 /**
- * PrimeDialog v1.0.1
- * Created by Ifedayo Bolade on May 16, 2026.
+ * PrimeDialog v1.0.2
+ * Created by Ifedayo Bolade on May 18, 2026.
  */
 
 class PrimeDialog
@@ -192,7 +192,7 @@ constructor(
      * @param titleTextViewIdRes Specify the custom view's title text view id. This allows
      * the internal modification of the Title textView like [setTitleColor],[setTitleTypeface] etc.
      * @param messageTextViewIdRes Specify the custom view's message text view id. This allows
-     * the internal modification of the Title textView like [setMessageMargin],[setMessageColor] etc.
+     * the internal modification of the Title textView like [setMargin],[setMessageColor] etc.
      */
     fun setCustomView(
         @LayoutRes layoutRes: Int,
@@ -699,27 +699,26 @@ constructor(
         }
 
     /**
-     * Apply specified margins to left, top, right and bottom of message.
+     * Apply the specified margin to left, top, right and bottom of dialog message OR custom view/layout.
      * @param marginDp The margin in dp.
      */
-    fun setMessageMargin(marginDp: Int): PrimeDialog {
-        return setMessageMargin(marginDp, marginDp, marginDp, marginDp)
+    fun setMargin(marginDp: Int): PrimeDialog {
+        return setMargin(marginDp, marginDp, marginDp, marginDp)
     }
 
     /**
-     * Apply specific margins (in dp) to left, top, right and bottom of message.
-     * @see [setMessageMargin]
+     * Apply the specified margin to left, top, right and bottom of dialog message OR custom view/layout.
+     * @see [setMargin]
      */
-    fun setMessageMargin(leftDp: Int = 16, topDp: Int = 0, rightDp: Int = 16, bottomDp: Int = 0): PrimeDialog {
+    fun setMargin(leftDp: Int = 16, topDp: Int = 0, rightDp: Int = 16, bottomDp: Int = 0): PrimeDialog {
         if (isCustomView) {
-            val linearLayout = frameLayout.getChildAt(0) as? LinearLayout
-            val layoutParams = linearLayout?.layoutParams as? RelativeLayout.LayoutParams
+            val layoutParams = frameLayout.layoutParams as? RelativeLayout.LayoutParams
             layoutParams?.setMargins(toDP(leftDp), toDP(topDp), toDP(rightDp), toDP(bottomDp))
         } else {
             val layoutParams = message.layoutParams as? RelativeLayout.LayoutParams
             layoutParams?.setMargins(toDP(leftDp), toDP(topDp), toDP(rightDp), toDP(bottomDp))
+            messageAttributes.isMarginSet = true
         }
-        messageAttributes.isMarginSet = true
         return this
     }
 
@@ -1447,9 +1446,9 @@ constructor(
                     if(!titleAttributes.isTitleSet){
                         val margin = 9
                         val bottomMargin = if(isActionButtonSet) 0 else margin
-                        setMessageMargin(topDp = margin, bottomDp = bottomMargin)
+                        setMargin(topDp = margin, bottomDp = bottomMargin)
                     } else {
-                        setMessageMargin()
+                        setMargin()
                     }
                 }
             }
@@ -1787,5 +1786,10 @@ constructor(
         val TYPEFACE_SANS_SERIF_MEDIUM = Typeface.create("sans-serif-medium", Typeface.NORMAL)
         @JvmField
         val TYPEFACE_SANS_SERIF_CONDENSED = Typeface.create("sans-serif-condensed", Typeface.NORMAL)
+
+        /** Converts a regular int dimension value to dp*/
+        fun toDP(context: Context, dpValue: Int): Int {
+            return (dpValue * context.resources.displayMetrics.density + 0.5).toInt()
+        }
     }
 }

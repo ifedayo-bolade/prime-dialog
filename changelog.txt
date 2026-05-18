@@ -11,3 +11,7 @@
 to be used with 'setWindowAnimation(styleRes)'.
 - Removed 'setWindowAnimationEnabled(boolean)'
 - Removed unused resources
+
+(v1.0.2)
+- Renamed 'setMessageMargin()' to 'setMargin()'
+- Ability to set custom layout/view margin by calling 'setMargin()'

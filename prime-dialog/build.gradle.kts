@@ -36,7 +36,7 @@ publishing {
         register<MavenPublication>("release") {
             groupId = "com.github.ifedayo-bolade"
             artifactId = "prime-dialog"
-            version = "1.0.1"
+            version = "1.0.2"
 
             afterEvaluate {
                 from(components["release"])
