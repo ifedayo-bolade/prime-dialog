@@ -2,15 +2,15 @@
 - Initial release.
 
 (v1.0.1)
-- Fixed title typeface not applied.
+- Removed unused resources
+- Removed 'setWindowAnimationEnabled(boolean)'
 - Added 'setDontShowAgainColor()' and 'setDontShowAgainColorRes()'.
-- Added built-in window animation style resources:
+- Added built-in window enter and exit animation style resources:
     'PrimeDialog.WINDOW_ANIMATION_FADE'
-    'PrimeDialog.WINDOW_ANIMATION_FLASH' -> (Active as Default)
+    'PrimeDialog.WINDOW_ANIMATION_FLASH' -> (Used as default)
     'PrimeDialog.WINDOW_ANIMATION_SLIDE'
 to be used with 'setWindowAnimation(styleRes)'.
-- Removed 'setWindowAnimationEnabled(boolean)'
-- Removed unused resources
+- Fixed title typeface not getting applied with 'setTitleTypeface()' and 'setTitleTypefaceRes()'.
 
 (v1.0.2)
 - Renamed 'setMessageMargin()' to 'setMargin()'
