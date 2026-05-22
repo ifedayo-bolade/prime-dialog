@@ -63,7 +63,7 @@ PrimeDialog(this)
     .setTitle("HELLO WORLD!")
     .setMessage("I'm PrimeDialog, nice to meet you.")
     .setNegativeButton("CANCEL")
-    .setPositiveButton("I SEE YOU") { dialog: PrimeDialog, _ ->
+    .setPositiveButton("I SEE YOU") { dialog: PrimeDialog, buttonId: Int ->
         dialog.dismiss()
         Toast.makeText(this, "I see you too!", Toast.LENGTH_SHORT).show()
     }.show()
