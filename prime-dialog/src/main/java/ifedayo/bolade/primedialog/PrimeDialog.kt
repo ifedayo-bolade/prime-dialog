@@ -44,12 +44,14 @@ import androidx.annotation.StyleRes
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.ContextCompat
+import androidx.core.content.edit
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.widget.CompoundButtonCompat
 import androidx.core.widget.ImageViewCompat
 import kotlin.properties.Delegates
 import androidx.core.graphics.toColorInt
 import androidx.core.view.isVisible
+import androidx.preference.PreferenceManager
 import ifedayo.bolade.primedialog.databinding.PrimeDialogLayoutBinding
 import kotlin.apply
 import kotlin.let
@@ -59,7 +61,7 @@ import kotlin.text.substring
 
 /**
  * PrimeDialog v1.0.2
- * Created by Ifedayo Bolade on May 18, 2026.
+ * Created by Ifedayo Bolade on May 26, 2026.
  */
 
 class PrimeDialog
@@ -98,7 +100,8 @@ constructor(
     private var messageAttributes: MessageAttributes = MessageAttributes()
     private var checkboxAttributes: CheckboxAttributes = CheckboxAttributes()
 
-    private val TAG = "PrimeDialog"
+    private var DONT_SHOW_AGAIN_KEY: String? = null
+    private val preference = PreferenceManager.getDefaultSharedPreferences(context)
 
     private data class IconAttributes(
         var size: Int = 38,
@@ -131,6 +134,7 @@ constructor(
     private data class CheckboxAttributes(
         var color: Int? = null,
         var label: String = "Don't show again",
+        var keyId: String? = null,
         var isDontShowAgainSet: Boolean = false
     )
 
@@ -314,7 +318,6 @@ constructor(
             iconAttributes.isIconSet = true
         } ?: run {
             val message = "PrimeDialog icon bitmap is null"
-            Log.i(TAG, message)
             showDebugToast(message)
         }
         return this
@@ -410,7 +413,6 @@ constructor(
     fun setHeaderOverlayTintDepth(alphaValue: String): PrimeDialog {
         if (alphaValue.length > 2) {
             val message = "'setHeaderOverlayTintDepth' - Alpha value should be two characters long"
-            Log.i(TAG, message)
             showDebugToast(message)
             return this
         }
@@ -1104,21 +1106,55 @@ constructor(
 
     private fun dispatchDismissEvent(actionId: Int?, isCancelled: Boolean){
         onDialogDismissListener?.onDialogDismiss(this, actionId ?: DISMISS_ACTION_CLICK_OUTSIDE, isCancelled)
-        onDontShowAgainListener?.let {
-            if(binding.checkBox.isChecked && checkboxAttributes.isDontShowAgainSet) it.onDismiss()
+        if(binding.checkBox.isChecked && checkboxAttributes.isDontShowAgainSet) {
+            onDontShowAgainListener?.onDismiss()
+            if(DONT_SHOW_AGAIN_KEY != null)
+                registerDontShowAgain()
         }
     }
 
+    private fun registerDontShowAgain() {
+        preference.edit { putBoolean(DONT_SHOW_AGAIN_KEY, true) }
+    }
+
+    /** Clears the 'Don't show again' preference entry that prevents dialog from
+     * showing after don't show again has been set.
+     * @param key The string key previously passed into the dialog's [setDontShowAgain] function. */
+    fun removeDontShowAgain(key: String): PrimeDialog {
+        if(key.isEmpty()){
+            showDebugToast("cancelDontShowAgain() 'keyId' is empty")
+            return this
+        }
+        if(!preference.contains("prime_dialog_$key")){
+            showDebugToast("No 'Don't show again' entry for - $key")
+            return this
+        }
+        preference.edit { remove("prime_dialog_$key") }
+        return this
+    }
 
     @JvmOverloads
-    /** A checkbox will be shown on this dialog with the provided 'Don't show again' label.
-     * @param label The text to display with the CheckBox.
-     * @param onDontShowAgainListener The listener to govern your 'Don't show again'
-     * logic.
+    /** A 'Don't show again' checkbox will be shown on this dialog. If the checkbox is
+     * checked before the dialog gets dismissed. The Dialog will not be shown again.
+     * To get the dialog to show again, call [removeDontShowAgain] and pass in the string key.
+     * @param key A unique string key for 'Don't show again' record entry.
+     * @param label The text label of the CheckBox.
+     * @param onDontShowAgainListener Optional listener to intercept 'Don't show again' events.
      */
-    fun setDontShowAgain(label: String = checkboxAttributes.label, onDontShowAgainListener: OnDontShowAgainListener?): PrimeDialog {
-        checkboxAttributes.label = label
-        checkboxAttributes.isDontShowAgainSet = true
+    fun setDontShowAgain(
+        key: String,
+        label: String = checkboxAttributes.label,
+        onDontShowAgainListener: OnDontShowAgainListener? = null
+    ): PrimeDialog {
+        if(key.isEmpty()){
+            showDebugToast("Don't show again 'key' is empty")
+            return this
+        }
+        DONT_SHOW_AGAIN_KEY = "prime_dialog_$key"
+        checkboxAttributes.apply {
+            this.label = label
+            isDontShowAgainSet = true
+        }
         this.onDontShowAgainListener = onDontShowAgainListener
         return this
     }
@@ -1386,6 +1422,7 @@ constructor(
             binding.checkBox.apply {
                 setOnCheckedChangeListener { _, isChecked ->
                     onDontShowAgainListener?.onBoxCheck(isChecked)
+                    checkboxAttributes.keyId = if(isChecked) DONT_SHOW_AGAIN_KEY else null
                 }
                 val color = checkboxAttributes.color ?: colorAccent
                 CompoundButtonCompat.setButtonTintList(
@@ -1539,51 +1576,64 @@ constructor(
     }
 
     fun show() {
-        val dialog = getDialog()
-        if (context is Activity) {
-            if (!(context as Activity).isFinishing) {
-                dialog.show()
+        val funShow = {
+            val dialog = getDialog()
+            if (context is Activity) {
+                if (!(context as Activity).isFinishing) {
+                    dialog.show()
+                } else {
+                    /** This prevents a crash due to 'BadTokenException', it occurs
+                     * if the activity for whatever reason gets killed before the
+                     * Dialog is shown.  */
+                    val message = "show() - 'BadTokenException'"
+                    showDebugToast(message)
+                }
             } else {
-                /** This prevents a crash due to 'BadTokenException', it occurs
-                 * if the activity for whatever reason gets killed before the
-                 * Dialog is shown.  */
-                val message = "show() - 'BadTokenException'"
-                Log.i(TAG, message)
-                showDebugToast(message)
+                dialog.show()
             }
-        } else {
-            dialog.show()
-        }
-        if (!onDialogDismissListenerSet && checkboxAttributes.isDontShowAgainSet) {
-            dialog.setOnDismissListener {
-                if (binding.checkBox.isChecked && onDontShowAgainListener != null) onDontShowAgainListener!!.onDismiss()
-            }
-        }
 
-        val dialogView = dialog.window?.decorView
-        dialogView?.viewTreeObserver?.addOnGlobalLayoutListener(object :
-            ViewTreeObserver.OnGlobalLayoutListener {
-            override fun onGlobalLayout() {
-                dialogView.viewTreeObserver?.removeOnGlobalLayoutListener(this)
-                val factor = (maxHeightPercent / 100f) * DEFAULT_HEIGHT_FRACTION
-                val maxHeight = (screenHeight * factor)
-                val targetHeight = (screenHeight * DEFAULT_HEIGHT_FRACTION).toInt()
-                val dialogHeight = this@PrimeDialog.dialogView?.height
-                dialogHeight?.let {
-                    val isMaxHeightMet = isMaxHeightSet && dialogHeight > maxHeight
-                    if(!isDialogHeightDefined){
-                        /**If the dialog exceeds the device screen height, and [setMaxHeight] is not
-                         * called, the dialog height is reset to a maximum
-                         * of [maxHeightPercent] of the device screen height.
-                         *
-                         * If [setMaxHeight] is called, then the specified value of [maxHeightPercent]
-                         * is used instead. */
-                        if(dialogHeight > targetHeight || isMaxHeightMet)
-                            setDialogHeight(maxHeightPercent)
+            if (!onDialogDismissListenerSet && checkboxAttributes.isDontShowAgainSet) {
+                dialog.setOnDismissListener {
+                    if(binding.checkBox.isChecked) {
+                        onDontShowAgainListener?.onDismiss()
+                        registerDontShowAgain()
                     }
                 }
             }
-        })
+
+            val dialogView = dialog.window?.decorView
+            dialogView?.viewTreeObserver?.addOnGlobalLayoutListener(object :
+                ViewTreeObserver.OnGlobalLayoutListener {
+                override fun onGlobalLayout() {
+                    dialogView.viewTreeObserver?.removeOnGlobalLayoutListener(this)
+                    val factor = (maxHeightPercent / 100f) * DEFAULT_HEIGHT_FRACTION
+                    val maxHeight = (screenHeight * factor)
+                    val targetHeight = (screenHeight * DEFAULT_HEIGHT_FRACTION).toInt()
+                    val dialogHeight = this@PrimeDialog.dialogView?.height
+                    dialogHeight?.let {
+                        val isMaxHeightMet = isMaxHeightSet && dialogHeight > maxHeight
+                        if(!isDialogHeightDefined){
+                            /**If the dialog exceeds the device screen height, and [setMaxHeight] is not
+                             * called, the dialog height is reset to a maximum
+                             * of [maxHeightPercent] of the device screen height.
+                             *
+                             * If [setMaxHeight] is called, then the specified value of [maxHeightPercent]
+                             * is used instead. */
+                            if(dialogHeight > targetHeight || isMaxHeightMet)
+                                setDialogHeight(maxHeightPercent)
+                        }
+                    }
+                }
+            })
+        }
+
+        val dontShowEnabled = DONT_SHOW_AGAIN_KEY?.let { key ->
+            preference.getBoolean(key, false)
+        } ?: false
+
+        if(!dontShowEnabled){
+            funShow()
+        }
     }
 
     fun dismiss() {
@@ -1703,9 +1753,7 @@ constructor(
 
     /** This listener checks for 'Don't show again' event. */
     private interface DontShowAgainListener {
-        /** Fires ONLY when the 'Don't show again' checkbox is checked before dialog dismissal.
-         * @author Write your logic for not showing the dialog again here. This could be
-         * storing a Shared preference value or some other means. */
+        /** Fires ONLY when 'Don't show again' is checked before dialog dismissal. */
         fun onDismiss()
         /** Fires everytime the checkbox is toggled. */
         fun onBoxCheck(isChecked: Boolean)
@@ -1725,6 +1773,7 @@ constructor(
         }
 
     private fun showDebugToast(message: String) {
+        Log.i(TAG, message)
         if (BuildConfig.DEBUG) Toast.makeText(context, message, Toast.LENGTH_LONG).show()
     }
 
@@ -1745,6 +1794,7 @@ constructor(
         @JvmField
         var ACCENT_MODE_ALL: Int = 3
 
+        private val TAG = "PrimeDialog"
         private const val DEFAULT_ANIMATION_DURATION: Long = -11
 
         @JvmField
@@ -1790,6 +1840,20 @@ constructor(
         /** Converts a regular int dimension value to dp*/
         fun toDP(context: Context, dpValue: Int): Int {
             return (dpValue * context.resources.displayMetrics.density + 0.5).toInt()
+        }
+
+        /** Clears the 'Don't show again' preference entry that prevents dialog from
+         * showing after don't show again has been set.
+         * @param context The
+         * @param key The string key previously passed into the dialog's [setDontShowAgain] function.
+         * @return Returns true if successful, false otherwise. */
+        fun removeDontShowAgain(context: Context, key: String): Boolean {
+            val preference = PreferenceManager.getDefaultSharedPreferences(context)
+            if(!preference.contains("prime_dialog_$key")){
+                Log.i(TAG, "No 'Don't show again' entry for - $key")
+                return false
+            }
+            return preference.edit().remove("prime_dialog_$key").commit()
         }
     }
 }

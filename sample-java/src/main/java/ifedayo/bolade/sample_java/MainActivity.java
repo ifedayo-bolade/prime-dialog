@@ -3,11 +3,14 @@ package ifedayo.bolade.sample_java;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.activity.OnBackPressedCallback;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.res.ResourcesCompat;
@@ -211,7 +214,8 @@ public class MainActivity extends AppCompatActivity {
                     }
                     showMessage(isCancelled ? "Cancelled - " + string : "Not cancelled - " + string);
                 })
-                .setDontShowAgain("Don't remind me again", onDontShowAgainListener)
+//                .removeDontShowAgain("dld")
+                .setDontShowAgain("dld", "Don't remind me again", onDontShowAgainListener)
                 .setDontShowAgainColorRes(R.color.colorGreen)
                 .show();
     }
@@ -231,7 +235,7 @@ public class MainActivity extends AppCompatActivity {
                 .setPositiveButton("DISMISS")
                 .setOnDialogShowListener(dialog ->
                         showMessage("Hello from onDialogShowListener!"))
-                .setDontShowAgain("Don't remind me again", onDontShowAgainListener)
+                .setDontShowAgain("dld2","Don't remind me again", onDontShowAgainListener)
                 .show();
     }
 
@@ -278,7 +282,7 @@ public class MainActivity extends AppCompatActivity {
                 })
 
                 .setAccentColorRes(R.color.colorOrange)  // Optional
-                .setDontShowAgain(onDontShowAgainListener) // Optional
+                .setDontShowAgain("dcd2") // Optional
                 .setBackgroundColor(Color.LTGRAY) // Optional
                 .setActionLayoutBackgroundColor(Color.DKGRAY) // Optional
                 .setNeutralButton("CREATE ACCOUNT", (dialog, buttonId) -> // Optional
@@ -292,14 +296,6 @@ public class MainActivity extends AppCompatActivity {
         showMessage("Please click the login button");
     }
 
-    private final PrimeDialog.OnDontShowAgainListener listener = new PrimeDialog.OnDontShowAgainListener(){
-
-        @Override
-        public void onDismiss() {
-
-        }
-    };
-
     private final PrimeDialog.OnDontShowAgainListener onDontShowAgainListener = new PrimeDialog.OnDontShowAgainListener() {
         @Override
         public void onBoxCheck(boolean isChecked) {
@@ -311,9 +307,6 @@ public class MainActivity extends AppCompatActivity {
             // This method will ONLY get called IF the 'Don't show again'
             // checkbox is checked.
 
-            // Write your "Don't remind me again" logic here. This could be
-            // storing a Shared preference value or some other means.
-            // You check for this value next time you are to show the dialog
             showMessage("Okay, I won't remind you again");
         }
     };
@@ -328,4 +321,26 @@ public class MainActivity extends AppCompatActivity {
             MainActivity.this.finish();
         }
     };
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if(item.getItemId() == R.id.action_remove_dont_show){
+            PrimeDialog dialog = new PrimeDialog(this);
+            // If you have the dialog instance
+            dialog.removeDontShowAgain("dld");
+
+            // If you do not have the dialog instance
+            PrimeDialog.Companion.removeDontShowAgain(this, "dld2");
+            PrimeDialog.Companion.removeDontShowAgain(this, "dcd2");
+
+            showMessage("'Don't show again' is removed for all dialogs");
+        }
+        return super.onOptionsItemSelected(item);
+    }
 }

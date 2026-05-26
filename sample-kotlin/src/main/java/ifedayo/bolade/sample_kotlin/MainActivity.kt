@@ -2,6 +2,8 @@ package ifedayo.bolade.sample_kotlin
 
 import android.graphics.Color
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.widget.Button
 import android.widget.Toast
@@ -14,7 +16,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.RecyclerView
 import ifedayo.bolade.primedialog.PrimeDialog
-import ifedayo.bolade.primedialog.PrimeDialog.OnDialogButtonClickListener
+import ifedayo.bolade.primedialog.PrimeDialog.Companion.removeDontShowAgain
 import ifedayo.bolade.primedialog.PrimeDialog.OnDontShowAgainListener
 
 class MainActivity : AppCompatActivity() {
@@ -205,7 +207,7 @@ class MainActivity : AppCompatActivity() {
                 }
                 showMessage(if (isCancelled) "Cancelled - $string" else "Not cancelled - $string")
             }
-            .setDontShowAgain("Don't remind me again", onDontShowAgainListener)
+            .setDontShowAgain("dld","Don't remind me again", onDontShowAgainListener)
             .setDontShowAgainColorRes(R.color.colorGreen)
             .show()
     }
@@ -221,13 +223,13 @@ class MainActivity : AppCompatActivity() {
             )
             .setMessageTypefaceRes(R.font.maitree_medium)
             .setNegativeButton("CLICK ME") { dialog: PrimeDialog, _: Int ->
-                // dialog.dismiss();
+                // dialog.dismiss()
                 showMessage("You clicked me!")
             }
             .setPositiveButton("DISMISS")
             .setOnDialogShowListener { _: PrimeDialog ->
                 showMessage("Hello from onDialogShowListener!") }
-            .setDontShowAgain("Don't remind me again", onDontShowAgainListener)
+            .setDontShowAgain("dld2", "Don't remind me again", onDontShowAgainListener)
             .show()
     }
 
@@ -272,7 +274,7 @@ class MainActivity : AppCompatActivity() {
             }
 
             .setAccentColorRes(R.color.colorOrange) // Optional
-            .setDontShowAgain(onDontShowAgainListener = onDontShowAgainListener) // Optional
+            .setDontShowAgain("dcd2") // Optional
             .setBackgroundColor(Color.LTGRAY) // Optional
             .setActionLayoutBackgroundColor(Color.DKGRAY) // Optional
             .setNeutralButton("CREATE ACCOUNT") { _: PrimeDialog, _: Int ->  // Optional
@@ -297,10 +299,6 @@ class MainActivity : AppCompatActivity() {
                 // This method will ONLY get called IF the 'Don't show again'
                 // checkbox is checked.
 
-                // Write your "Don't remind me again" logic here. This could be
-                // storing a Shared preference value or some other means.
-                // You check for this value next time you are to show the dialog
-
                 showMessage("Okay, I won't remind you again")
             }
         }
@@ -315,4 +313,24 @@ class MainActivity : AppCompatActivity() {
                 this@MainActivity.finish()
             }
         }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.main, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == R.id.action_remove_dont_show) {
+            val dialog = PrimeDialog(this)
+            // If you have the dialog instance
+            dialog.removeDontShowAgain("dld")
+
+            // If you do not have the dialog instance
+            removeDontShowAgain(this, "dld2")
+            removeDontShowAgain(this, "dcd2")
+
+            showMessage("'Don't show again' is removed for all dialogs")
+        }
+        return super.onOptionsItemSelected(item)
+    }
 }

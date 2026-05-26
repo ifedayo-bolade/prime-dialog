@@ -54,4 +54,5 @@ publishing {
 dependencies {
     implementation(libs.kenburnsview)
     implementation(libs.androidx.appcompat)
+    implementation(libs.androidx.preference.ktx)
 }

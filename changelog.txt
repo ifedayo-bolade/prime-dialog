@@ -15,3 +15,9 @@ to be used with 'setWindowAnimation(styleRes)'.
 (v1.0.2)
 - Renamed 'setMessageMargin()' to 'setMargin()'
 - Ability to set custom layout/view margin by calling 'setMargin()'
+- Added 'removeDontShowAgain(key)' for use with a dialog instance
+- Added 'PrimeDialog.removeDontShowAgain(context, key)' for use with no dialog instance
+- Changed
+    'setDontShowAgain(label, onDontShowAgainListener)' to
+    'setDontShowAgain(key, label, onDontShowAgainListener)'
+with 'key' as a required String parameter, while the others parameters are now optional.

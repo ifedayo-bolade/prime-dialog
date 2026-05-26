@@ -10,6 +10,7 @@ kenburnsview = "1.0.7"
 material = "1.13.0"
 activityKtx = "1.13.0"
 constraintlayout = "2.2.1"
+preferenceKtx = "1.2.1"
 
 [libraries]
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
@@ -22,6 +23,7 @@ kenburnsview = { module = "com.flaviofaria:kenburnsview", version.ref = "kenburn
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 androidx-activity-ktx = { group = "androidx.activity", name = "activity-ktx", version.ref = "activityKtx" }
 androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
+androidx-preference-ktx = { module = "androidx.preference:preference-ktx", version.ref = "preferenceKtx" }
 
 [plugins]
 maven-publish = { id = "maven-publish" }
