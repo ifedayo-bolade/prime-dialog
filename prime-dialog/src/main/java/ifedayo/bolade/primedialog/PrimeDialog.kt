@@ -1163,8 +1163,8 @@ constructor(
     /** A 'Don't show again' checkbox will be shown on this dialog. If the checkbox is
      * checked before the dialog gets dismissed. The Dialog will not be shown again.
      * To get the dialog to show again, call [removeDontShowAgain] and pass in the string key.
-     * @param key A unique string key for 'Don't show again' record entry.
-     * @param label The text label of the CheckBox.
+     * @param keyRes A unique string key resource id for 'Don't show again' record entry.
+     * @param labelRes The text label resource id of the CheckBox.
      * @param onDontShowAgainListener Optional listener to intercept 'Don't show again' events.
      */
     fun setDontShowAgain(
