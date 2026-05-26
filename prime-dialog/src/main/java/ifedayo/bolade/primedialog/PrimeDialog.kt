@@ -1122,7 +1122,7 @@ constructor(
      * @param key The string key previously passed into the dialog's [setDontShowAgain] function. */
     fun removeDontShowAgain(key: String): PrimeDialog {
         if(key.isEmpty()){
-            showDebugToast("cancelDontShowAgain() 'keyId' is empty")
+            showDebugToast("cancelDontShowAgain() 'key' is empty")
             return this
         }
         if(!preference.contains("prime_dialog_$key")){
