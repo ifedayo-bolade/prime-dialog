@@ -597,7 +597,7 @@ constructor(
         }
 
     /** The approximate percentage portion occupied by [dialogView] relative to the
-     * overall dialog height. (Excluding height taken by 'Title', 'Don't show again'
+     * overall dialog height. (Excluding height taken by 'Title', 'Don’t show again'
      * and 'Action buttons')*/
     private val DEFAULT_HEIGHT_FRACTION: Float
         get() {
@@ -639,7 +639,7 @@ constructor(
      * You may need to handle inset if you are using this function.
      *
      * IMPORTANT NOTE: This height explicitly applies to the ScrollView parent of the dialog message.
-     * The height of 'Title', 'Don't show again' and 'Action buttons' are not taken into
+     * The height of 'Title', 'Don’t show again' and 'Action buttons' are not taken into
      * account.
      * @author
      * @see setDialogWidth
@@ -753,7 +753,7 @@ constructor(
     }
 
     /** Set the background color for the action layouts including
-     * both the 'Don't show again' layout and action buttons layout.
+     * both the 'Don’t show again' layout and action buttons layout.
      * @see setDontShowAgainLayoutBackgroundColor
      * @see setActionButtonLayoutBackgroundColor */
     fun setActionLayoutBackgroundColor(colorCode: String): PrimeDialog {
@@ -761,7 +761,7 @@ constructor(
     }
 
     /** Set the background color for the action layouts including
-     * both the 'Don't show again' layout and action buttons layout.
+     * both the 'Don’t show again' layout and action buttons layout.
      * @see setDontShowAgainLayoutBackgroundColor
      * @see setActionButtonLayoutBackgroundColor */
     fun setActionLayoutBackgroundColorRes(@ColorRes colorRes: Int): PrimeDialog {
@@ -770,7 +770,7 @@ constructor(
 
     private var isActionLayoutBackgroundColorSet = false
     /** Set the background color for the action layouts including
-     * both the 'Don't show again' layout and action buttons layout.
+     * both the 'Don’t show again' layout and action buttons layout.
      * @see setDontShowAgainLayoutBackgroundColor
      * @see setActionButtonLayoutBackgroundColor */
     fun setActionLayoutBackgroundColor(@ColorInt color: Int): PrimeDialog {
@@ -808,21 +808,21 @@ constructor(
         return this
     }
 
-    /** Set the background color for the 'Don't show again' layout.
+    /** Set the background color for the 'Don’t show again' layout.
      * @see setActionLayoutBackgroundColor
      * @see setActionButtonLayoutBackgroundColor */
     fun setDontShowAgainLayoutBackgroundColorRes(@ColorRes colorRes: Int): PrimeDialog {
         return setDontShowAgainLayoutBackgroundColor(getColor(colorRes))
     }
 
-    /** Set the background color for the 'Don't show again' layout.
+    /** Set the background color for the 'Don’t show again' layout.
      * @see setActionLayoutBackgroundColor
      * @see setActionButtonLayoutBackgroundColor */
     fun setDontShowAgainLayoutBackgroundColor(colorHex: String): PrimeDialog {
         return setDontShowAgainLayoutBackgroundColor(colorHex.toColorInt())
     }
 
-    /** Set the background color for the 'Don't show again' layout.
+    /** Set the background color for the 'Don’t show again' layout.
      * @see setActionLayoutBackgroundColor
      * @see setActionButtonLayoutBackgroundColor */
     fun setDontShowAgainLayoutBackgroundColor(@ColorInt color: Int): PrimeDialog {
@@ -1118,7 +1118,7 @@ constructor(
         preference.edit { putBoolean(DONT_SHOW_AGAIN_KEY, true) }
     }
 
-    /** Clears the 'Don't show again' preference entry that prevents dialog from
+    /** Clears the 'Don’t show again' preference entry that prevents dialog from
      * showing after don't show again has been set.
      * @param key The string key previously passed into the dialog's [setDontShowAgain] function. */
     fun removeDontShowAgain(key: String): PrimeDialog {
@@ -1127,7 +1127,7 @@ constructor(
             return this
         }
         if(!preference.contains("prime_dialog_$key")){
-            showDebugToast("No 'Don't show again' entry for - $key")
+            showDebugToast("No 'Don’t show again' entry for - $key")
             return this
         }
         preference.edit { remove("prime_dialog_$key") }
@@ -1135,11 +1135,14 @@ constructor(
     }
 
     @JvmOverloads
-    /** A 'Don't show again' checkbox will be shown on this dialog. If the checkbox is
-     * checked before the dialog gets dismissed. The Dialog will not be shown again.
-     * To get the dialog to show again, call [removeDontShowAgain] and pass in the string key.
-     * @param label The text label of the CheckBox.
-     * @param onDontShowAgainListener Optional listener to intercept 'Don't show again' events.
+    /** A checkbox will be shown on this dialog with a 'Don’t show again' label. However,
+     * you'll need to write your 'Don’t show again' logic by utilizing [OnDontShowAgainListener]
+     * callback. Use [setManagedDontShowAgain] if you prefer PrimeDialog to manage 'Don’t show
+     * again' automatically.
+     * @param label The text label to display on the CheckBox.
+     * @param onDontShowAgainListener The listener to govern your 'Don’t show again' events.
+     * @see setManagedDontShowAgain
+     * logic.
      */
     fun setDontShowAgain(
         label: String = checkboxAttributes.label,
@@ -1149,18 +1152,24 @@ constructor(
     }
 
     @JvmOverloads
-    /** A 'Don't show again' checkbox will be shown on this dialog. If the checkbox is
-     * checked before the dialog gets dismissed. The Dialog will not be shown again.
-     * To get the dialog to show again, call [removeDontShowAgain] and pass in the string key.
-     * @param key A unique string key for 'Don't show again' record entry.
+    /** A 'Don’t show again' checkbox will be shown on this dialog. If the checkbox is
+     * checked before the dialog gets dismissed. The dialog will not be shown again.
+     * To get the dialog to show again, call [removeDontShowAgain] and pass in the 'key'
+     * parameter.
+     * @param key A unique string key for 'Don’t show again' record entry.
      * @param label The text label of the CheckBox.
-     * @param onDontShowAgainListener Optional listener to intercept 'Don't show again' events.
+     * @param onDontShowAgainListener Optional listener to intercept 'Don’t show again' events.
+     * @see setDontShowAgain
      */
     fun setManagedDontShowAgain(
         key: String,
         label: String = checkboxAttributes.label,
         onDontShowAgainListener: OnDontShowAgainListener? = null
     ): PrimeDialog {
+        if(key.isEmpty()){
+            showDebugToast("'Don’t show again' key cannot be empty")
+            return this
+        }
         return configureDontShowAgain(key, label, onDontShowAgainListener)
     }
 
@@ -1169,9 +1178,7 @@ constructor(
         label: String = checkboxAttributes.label,
         onDontShowAgainListener: OnDontShowAgainListener? = null
     ): PrimeDialog {
-        if(key?.isNotEmpty() == true){
-            DONT_SHOW_AGAIN_KEY = "prime_dialog_$key"
-        }
+        key?.let { DONT_SHOW_AGAIN_KEY = "prime_dialog_$it" }
         checkboxAttributes.apply {
             this.label = label
             isDontShowAgainSet = true
@@ -1180,14 +1187,14 @@ constructor(
         return this
     }
 
-    /** Sets 'Don't show again' checkbox color.
+    /** Sets 'Don’t show again' checkbox color.
      * @param colorInt The color to paint the checkbox. */
     fun setDontShowAgainColor(@ColorInt colorInt: Int): PrimeDialog {
         checkboxAttributes.color = getColor(colorInt)
         return this
     }
 
-    /** Sets 'Don't show again' checkbox color.
+    /** Sets 'Don’t show again' checkbox color.
      * @param colorRes The color resource to apply on the checkbox. */
     fun setDontShowAgainColorRes(@ColorRes colorRes: Int): PrimeDialog {
         return setDontShowAgainColor(getColor(colorRes))
@@ -1494,7 +1501,7 @@ constructor(
     private fun applyDynamicMargins() {
         with(binding){
             if(!isCustomView){
-                // Apply a top margin of 4dp to 'actionLayout' if 'Don't show again' is in use.
+                // Apply a top margin of 4dp to 'actionLayout' if 'Don’t show again' is in use.
                 val actionLayoutParams = actionLayout.layoutParams as? RelativeLayout.LayoutParams
                 actionLayoutParams?.apply {
                     topMargin = toDP(if(checkboxAttributes.isDontShowAgainSet) 4 else 0)
@@ -1512,7 +1519,7 @@ constructor(
             }
 
             // Remove the default 4dp top margin on button layout when both the layout
-            // and 'Don't show again' layout are both in use, so they don't feel too apart.
+            // and 'Don’t show again' layout are both in use, so they don't feel too apart.
             if(checkboxAttributes.isDontShowAgainSet && isActionButtonSet){
                 val buttonLayoutParams = buttonLayout.layoutParams as? FrameLayout.LayoutParams
                 buttonLayoutParams?.topMargin = toDP(0)
@@ -1772,15 +1779,15 @@ constructor(
 
     private var onDontShowAgainListener: OnDontShowAgainListener? = null
 
-    /** This listener checks for 'Don't show again' event. */
+    /** This listener checks for 'Don’t show again' event. */
     private interface DontShowAgainListener {
-        /** Fires ONLY when 'Don't show again' is checked before dialog dismissal. */
+        /** Fires ONLY when 'Don’t show again' is checked before dialog dismissal. */
         fun onDismiss()
         /** Fires everytime the checkbox is toggled. */
         fun onBoxCheck(isChecked: Boolean)
     }
 
-    /** This listener checks for 'Don't show again' event. */
+    /** This listener checks for 'Don’t show again' event. */
     abstract class OnDontShowAgainListener : DontShowAgainListener {
         /** Fires everytime the checkbox is toggled. */
         override fun onBoxCheck(isChecked: Boolean){}
@@ -1863,7 +1870,7 @@ constructor(
             return (dpValue * context.resources.displayMetrics.density + 0.5).toInt()
         }
 
-        /** Clears the 'Don't show again' preference entry that prevents dialog from
+        /** Clears the 'Don’t show again' preference entry that prevents dialog from
          * showing after don't show again has been set.
          * @param context The
          * @param key The string key previously passed into the dialog's [setDontShowAgain] function.
@@ -1871,7 +1878,7 @@ constructor(
         fun removeDontShowAgain(context: Context, key: String): Boolean {
             val preference = PreferenceManager.getDefaultSharedPreferences(context)
             if(!preference.contains("prime_dialog_$key")){
-                Log.i(TAG, "No 'Don't show again' entry for - $key")
+                Log.i(TAG, "No 'Don’t show again' entry for - $key")
                 return false
             }
             return preference.edit().remove("prime_dialog_$key").commit()

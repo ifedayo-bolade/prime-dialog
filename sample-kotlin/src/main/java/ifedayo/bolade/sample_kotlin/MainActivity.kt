@@ -207,7 +207,7 @@ class MainActivity : AppCompatActivity() {
                 }
                 showMessage(if (isCancelled) "Cancelled - $string" else "Not cancelled - $string")
             }
-            .setDontShowAgain("dld","Don't remind me again", onDontShowAgainListener)
+            .setManagedDontShowAgain(DONT_SHOW_AGAIN_KEY_1,"Don't remind me again", onDontShowAgainListener)
             .setDontShowAgainColorRes(R.color.colorGreen)
             .show()
     }
@@ -229,7 +229,7 @@ class MainActivity : AppCompatActivity() {
             .setPositiveButton("DISMISS")
             .setOnDialogShowListener { _: PrimeDialog ->
                 showMessage("Hello from onDialogShowListener!") }
-            .setDontShowAgain("dld2", "Don't remind me again", onDontShowAgainListener)
+            .setManagedDontShowAgain(DONT_SHOW_AGAIN_KEY_2, "Don't remind me again", onDontShowAgainListener)
             .show()
     }
 
@@ -274,7 +274,7 @@ class MainActivity : AppCompatActivity() {
             }
 
             .setAccentColorRes(R.color.colorOrange) // Optional
-            .setDontShowAgain("dcd2") // Optional
+            .setManagedDontShowAgain(DONT_SHOW_AGAIN_KEY_3) // Optional
             .setBackgroundColor(Color.LTGRAY) // Optional
             .setActionLayoutBackgroundColor(Color.DKGRAY) // Optional
             .setNeutralButton("CREATE ACCOUNT") { _: PrimeDialog, _: Int ->  // Optional
@@ -323,14 +323,20 @@ class MainActivity : AppCompatActivity() {
         if (item.itemId == R.id.action_remove_dont_show) {
             val dialog = PrimeDialog(this)
             // If you have the dialog instance
-            dialog.removeDontShowAgain("dld")
+            dialog.removeDontShowAgain(DONT_SHOW_AGAIN_KEY_1)
 
             // If you do not have the dialog instance
-            removeDontShowAgain(this, "dld2")
-            removeDontShowAgain(this, "dcd2")
+            removeDontShowAgain(this, DONT_SHOW_AGAIN_KEY_2)
+            removeDontShowAgain(this, DONT_SHOW_AGAIN_KEY_3)
 
             showMessage("'Don't show again' is removed for all dialogs")
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    companion object {
+        const val DONT_SHOW_AGAIN_KEY_1 = "dld"
+        const val DONT_SHOW_AGAIN_KEY_2 = "dld2"
+        const val DONT_SHOW_AGAIN_KEY_3 = "dcd2"
     }
 }

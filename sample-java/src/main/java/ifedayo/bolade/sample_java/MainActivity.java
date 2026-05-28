@@ -26,6 +26,10 @@ import ifedayo.bolade.primedialog.PrimeDialog;
 
 public class MainActivity extends AppCompatActivity {
 
+    private final String DONT_SHOW_AGAIN_KEY_1 = "dld";
+    private final String DONT_SHOW_AGAIN_KEY_2 = "dld2";
+    private final String DONT_SHOW_AGAIN_KEY_3 = "dcd2";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -214,8 +218,8 @@ public class MainActivity extends AppCompatActivity {
                     }
                     showMessage(isCancelled ? "Cancelled - " + string : "Not cancelled - " + string);
                 })
-//                .removeDontShowAgain("dld")
-                .setManagedDontShowAgain("dld", "Don't remind me again", onDontShowAgainListener)
+//                .removeDontShowAgain(DONT_SHOW_AGAIN_KEY_1)
+                .setManagedDontShowAgain(DONT_SHOW_AGAIN_KEY_1, "Don't remind me again", onDontShowAgainListener)
                 .setDontShowAgainColorRes(R.color.colorGreen)
                 .show();
     }
@@ -235,7 +239,7 @@ public class MainActivity extends AppCompatActivity {
                 .setPositiveButton("DISMISS")
                 .setOnDialogShowListener(dialog ->
                         showMessage("Hello from onDialogShowListener!"))
-                .setManagedDontShowAgain("dld2","Don't remind me again", onDontShowAgainListener)
+                .setManagedDontShowAgain(DONT_SHOW_AGAIN_KEY_2,"Don't remind me again", onDontShowAgainListener)
                 .show();
     }
 
@@ -282,7 +286,7 @@ public class MainActivity extends AppCompatActivity {
                 })
 
                 .setAccentColorRes(R.color.colorOrange)  // Optional
-                .setDontShowAgain("dcd2") // Optional
+                .setManagedDontShowAgain(DONT_SHOW_AGAIN_KEY_3) // Optional
                 .setBackgroundColor(Color.LTGRAY) // Optional
                 .setActionLayoutBackgroundColor(Color.DKGRAY) // Optional
                 .setNeutralButton("CREATE ACCOUNT", (dialog, buttonId) -> // Optional
@@ -333,11 +337,11 @@ public class MainActivity extends AppCompatActivity {
         if(item.getItemId() == R.id.action_remove_dont_show){
             PrimeDialog dialog = new PrimeDialog(this);
             // If you have the dialog instance
-            dialog.removeDontShowAgain("dld");
+            dialog.removeDontShowAgain(DONT_SHOW_AGAIN_KEY_1);
 
             // If you do not have the dialog instance
-            PrimeDialog.Companion.removeDontShowAgain(this, "dld2");
-            PrimeDialog.Companion.removeDontShowAgain(this, "dcd2");
+            PrimeDialog.Companion.removeDontShowAgain(this, DONT_SHOW_AGAIN_KEY_2);
+            PrimeDialog.Companion.removeDontShowAgain(this, DONT_SHOW_AGAIN_KEY_3);
 
             showMessage("'Don't show again' is removed for all dialogs");
         }
