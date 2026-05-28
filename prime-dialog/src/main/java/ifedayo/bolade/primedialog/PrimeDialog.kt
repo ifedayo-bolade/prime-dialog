@@ -1138,46 +1138,46 @@ constructor(
     /** A 'Don't show again' checkbox will be shown on this dialog. If the checkbox is
      * checked before the dialog gets dismissed. The Dialog will not be shown again.
      * To get the dialog to show again, call [removeDontShowAgain] and pass in the string key.
-     * @param key A unique string key for 'Don't show again' record entry.
      * @param label The text label of the CheckBox.
      * @param onDontShowAgainListener Optional listener to intercept 'Don't show again' events.
      */
     fun setDontShowAgain(
-        key: String,
         label: String = checkboxAttributes.label,
         onDontShowAgainListener: OnDontShowAgainListener? = null
     ): PrimeDialog {
-        if(key.isEmpty()){
-            showDebugToast("Don't show again 'key' is empty")
-            return this
-        }
-        DONT_SHOW_AGAIN_KEY = "prime_dialog_$key"
-        checkboxAttributes.apply {
-            this.label = label
-            isDontShowAgainSet = true
-        }
-        this.onDontShowAgainListener = onDontShowAgainListener
-        return this
+        return configureDontShowAgain(null, label, onDontShowAgainListener)
     }
 
     @JvmOverloads
     /** A 'Don't show again' checkbox will be shown on this dialog. If the checkbox is
      * checked before the dialog gets dismissed. The Dialog will not be shown again.
      * To get the dialog to show again, call [removeDontShowAgain] and pass in the string key.
-     * @param keyRes A unique string key resource id for 'Don't show again' record entry.
-     * @param labelRes The text label resource id of the CheckBox.
+     * @param key A unique string key for 'Don't show again' record entry.
+     * @param label The text label of the CheckBox.
      * @param onDontShowAgainListener Optional listener to intercept 'Don't show again' events.
      */
-    fun setDontShowAgain(
-        @StringRes keyRes: Int,
-        @StringRes labelRes: Int = R.string.dont_show_again,
+    fun setManagedDontShowAgain(
+        key: String,
+        label: String = checkboxAttributes.label,
         onDontShowAgainListener: OnDontShowAgainListener? = null
     ): PrimeDialog {
-        return setDontShowAgain(
-            context.getString(keyRes),
-            context.getString(labelRes),
-            onDontShowAgainListener
-        )
+        return configureDontShowAgain(key, label, onDontShowAgainListener)
+    }
+
+    private fun configureDontShowAgain(
+        key: String? = null,
+        label: String = checkboxAttributes.label,
+        onDontShowAgainListener: OnDontShowAgainListener? = null
+    ): PrimeDialog {
+        if(key?.isNotEmpty() == true){
+            DONT_SHOW_AGAIN_KEY = "prime_dialog_$key"
+        }
+        checkboxAttributes.apply {
+            this.label = label
+            isDontShowAgainSet = true
+        }
+        this.onDontShowAgainListener = onDontShowAgainListener
+        return this
     }
 
     /** Sets 'Don't show again' checkbox color.

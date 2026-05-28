@@ -215,7 +215,7 @@ public class MainActivity extends AppCompatActivity {
                     showMessage(isCancelled ? "Cancelled - " + string : "Not cancelled - " + string);
                 })
 //                .removeDontShowAgain("dld")
-                .setDontShowAgain("dld", "Don't remind me again", onDontShowAgainListener)
+                .setManagedDontShowAgain("dld", "Don't remind me again", onDontShowAgainListener)
                 .setDontShowAgainColorRes(R.color.colorGreen)
                 .show();
     }
@@ -235,7 +235,7 @@ public class MainActivity extends AppCompatActivity {
                 .setPositiveButton("DISMISS")
                 .setOnDialogShowListener(dialog ->
                         showMessage("Hello from onDialogShowListener!"))
-                .setDontShowAgain("dld2","Don't remind me again", onDontShowAgainListener)
+                .setManagedDontShowAgain("dld2","Don't remind me again", onDontShowAgainListener)
                 .show();
     }
 
