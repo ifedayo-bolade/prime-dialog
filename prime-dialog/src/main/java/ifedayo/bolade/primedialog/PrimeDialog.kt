@@ -61,7 +61,7 @@ import kotlin.text.substring
 
 /**
  * PrimeDialog v1.0.2
- * Created by Ifedayo Bolade on May 26, 2026.
+ * Created by Ifedayo Bolade on May 28, 2026.
  */
 
 class PrimeDialog
@@ -133,7 +133,7 @@ constructor(
 
     private data class CheckboxAttributes(
         var color: Int? = null,
-        var label: String = "Don't show again",
+        var label: String = "",
         var keyId: String? = null,
         var isDontShowAgainSet: Boolean = false
     )
@@ -145,6 +145,7 @@ constructor(
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.setContentView(binding.root)
         setWindowAnimation(WINDOW_ANIMATION_FLASH)
+        checkboxAttributes.label = context.getString(R.string.dont_show_again)
 
         // Initialize views
         headerLayout = binding.header
@@ -1169,7 +1170,7 @@ constructor(
      */
     fun setDontShowAgain(
         @StringRes keyRes: Int,
-        @StringRes labelRes: Int,
+        @StringRes labelRes: Int = R.string.dont_show_again,
         onDontShowAgainListener: OnDontShowAgainListener? = null
     ): PrimeDialog {
         return setDontShowAgain(
