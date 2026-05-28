@@ -21,3 +21,4 @@ to be used with 'setWindowAnimation(styleRes)'.
     'setDontShowAgain(label, onDontShowAgainListener)' to
     'setDontShowAgain(key, label, onDontShowAgainListener)'
 with 'key' as a required String parameter, while the others parameters are now optional.
+- Added 'setDontShowAgain(keyRes, labelRes, onDontShowAgainListener)'
