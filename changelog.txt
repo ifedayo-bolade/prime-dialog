@@ -19,6 +19,8 @@ to be used with 'setWindowAnimation(styleRes)'.
 - Added 'PrimeDialog.removeDontShowAgain(context, key)' and
     'PrimeDialog.removeDontShowAgain(context, List<key>)'for use with no dialog instance
 - Added 'setManagedDontShowAgain(key, label, onDontShowAgainListener)'
+- Added 'OnDialogSuppressedListener' to intercept an attempt to show dialog after
+    'Don’t show again' has taken effect.
 - Added 'setHeaderBitmap(bitmap)' and 'setHeaderDrawable(drawable)'
 - Renamed 'setHeaderBackgroundRes(drawableRes)' to 'setHeaderDrawable(drawableRes)'
 - Renamed 'setHeaderBackgroundColor()' to 'setHeaderColor()'

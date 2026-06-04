@@ -43,7 +43,6 @@ import androidx.annotation.StringRes
 import androidx.annotation.StyleRes
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.edit
 import androidx.core.content.res.ResourcesCompat
@@ -325,8 +324,8 @@ constructor(
     }
 
     /**
-     * Sets the drawable resource to be used as dialog icon.
-     * @param drawableRes The id of the drawable resource to be used as icon.
+     * Sets the dialog icon.
+     * @param drawableRes Drawable resource to display as the icon.
      */
     fun setIcon(@DrawableRes drawableRes: Int): PrimeDialog {
         iconAttributes.iconRes = drawableRes
@@ -631,7 +630,7 @@ constructor(
     private var isDialogWidthSet = false
     /**Sets the percentage width of the dialog. If needed, further adjustments to the dialog
      * width can be made using the 'dialogPaddingDp' parameter in [setRoundedCorners]
-     * @param percentageWidth The width (in percentage) relative to the device screen width.
+     * @param percentageWidth Dialog width as a percentage of the screen width.
      * Default value is 89.
      * @see setDialogHeight
      * @see setDimension */
@@ -807,21 +806,21 @@ constructor(
         return this
     }
 
-    /** Set the background color for the action buttons layout.
+    /** Set the background color for the action buttons container.
      * @see setActionLayoutBackgroundColor
      * @see setDontShowAgainLayoutBackgroundColor */
     fun setActionButtonLayoutBackgroundColorRes(@ColorRes colorRes: Int): PrimeDialog {
         return setActionButtonLayoutBackgroundColor(getColor(colorRes))
     }
 
-    /** Set the background color for the action buttons layout.
+    /** Set the background color for the action buttons container.
      * @see setActionLayoutBackgroundColor
      * @see setDontShowAgainLayoutBackgroundColor */
     fun setActionButtonLayoutBackgroundColor(colorHex: String): PrimeDialog {
         return setActionButtonLayoutBackgroundColor(colorHex.toColorInt())
     }
 
-    /** Set the background color for the action buttons layout.
+    /** Set the background color for the action buttons container.
      * @see setActionLayoutBackgroundColor
      * @see setDontShowAgainLayoutBackgroundColor */
     fun setActionButtonLayoutBackgroundColor(@ColorInt color: Int): PrimeDialog {
@@ -1180,17 +1179,23 @@ constructor(
      * @param key A unique string key for 'Don’t show again' record entry.
      * @param label The text label of the CheckBox.
      * @param onDontShowAgainListener Optional listener to intercept 'Don’t show again' events.
+     * @param onDialogSuppressedListener Optional listener to intercept an attempt to show a
+     *      dialog that has been suppressed by a previous [setManagedDontShowAgain] call.
+     *      This callback is fired instead of displaying the dialog, allowing the host
+     *      application to perform an alternative action if needed.
      * @see setDontShowAgain
      */
     fun setManagedDontShowAgain(
         key: String,
         label: String = checkboxAttributes.label,
-        onDontShowAgainListener: OnDontShowAgainListener? = null
+        onDontShowAgainListener: OnDontShowAgainListener? = null,
+        onDialogSuppressedListener: OnDialogSuppressedListener? = null
     ): PrimeDialog {
         if(key.isEmpty()){
             showDebugToast("'Don’t show again' key cannot be empty")
             return this
         }
+        this@PrimeDialog.onDialogSuppressedListener = onDialogSuppressedListener
         return configureDontShowAgain(key, label, onDontShowAgainListener)
     }
 
@@ -1631,9 +1636,8 @@ constructor(
                 if (!(context as Activity).isFinishing) {
                     dialog.show()
                 } else {
-                    /** This prevents a crash due to 'BadTokenException', it occurs
-                     * if the activity for whatever reason gets killed before the
-                     * Dialog is shown.  */
+                    /** Prevents a BadTokenException when the host Activity is
+                     * already finishing before the dialog can be shown. */
                     val message = "show() - 'BadTokenException'"
                     showDebugToast(message)
                 }
@@ -1682,6 +1686,8 @@ constructor(
 
         if(!dontShowEnabled){
             funShow()
+        } else {
+            onDialogSuppressedListener?.onDialogSuppressed()
         }
     }
 
@@ -1814,6 +1820,22 @@ constructor(
         override fun onBoxCheck(isChecked: Boolean){}
     }
 
+    private var onDialogSuppressedListener: OnDialogSuppressedListener? = null
+
+    /**
+     * Invoked when an attempt is made to show a dialog that has been suppressed
+     * by a previous [setManagedDontShowAgain] call.
+     *
+     * This callback is fired instead of displaying the dialog, allowing the host
+     * application to perform an alternative action if needed.
+     *
+     * Do NOT call [PrimeDialog.show] from this callback, as the dialog remains
+     * suppressed until [removeDontShowAgain] is called.
+     */
+    fun interface OnDialogSuppressedListener {
+        fun onDialogSuppressed()
+    }
+
     private val isNightModeActive: Boolean
         get() {
             val configuration = context.resources.configuration
@@ -1862,7 +1884,7 @@ constructor(
         @JvmField /** Dialog window slide in/out animation style resource id. */
         var WINDOW_ANIMATION_SLIDE = R.style.SlideAnimation
 
-        @JvmField /** Dialog dismissed by a non-action button call to 'dismiss()'. */
+        @JvmField /** Dialog dismissed by an explicit (non-button action) call to 'dismiss()'. */
         var DISMISS_ACTION_INTERNAL: Int = 1411
         @JvmField /** Dialog dismissed by user pressing BACK button on their device. */
         var DISMISS_ACTION_BACK_PRESSED: Int = 1412

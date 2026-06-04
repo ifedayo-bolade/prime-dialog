@@ -108,7 +108,7 @@ public class MainActivity extends AppCompatActivity {
                 .setAccentColorRes(R.color.colorCyan).setDialogWidth(92)
                 .setIcon(R.drawable.ic_info).setIconSize(37).setIconTintRes(R.color.colorGreen)
                 .setTitle("HEY THERE!").setTitleColorRes(R.color.colorOrange)
-                .setMessage("Icon, Title and Action Button texts inherits any color you specify with 'setAccentColor()'.\n\nHowever, you can explicitly set individual color for each of these elements as seen here\n\nLikewise you can customise your dialog background color between dark and light UI modes.")
+                .setMessage("By default, Icon, Title and Action Button texts inherits any color you specify with 'setAccentColor()'.\n\nHowever, you can explicitly set individual color for each of these elements as seen here\n\nLikewise you can customise your dialog background color between dark and light UI modes.")
                 .setMessageTypefaceRes(R.font.maitree_medium)
                 .setNeutralButton("GREAT")
                 .setNegativeButton("DISMISS")
@@ -219,7 +219,9 @@ public class MainActivity extends AppCompatActivity {
                     showMessage(isCancelled ? "Cancelled - " + string : "Not cancelled - " + string);
                 })
 //                .removeDontShowAgain(DONT_SHOW_AGAIN_KEY_1)
-                .setManagedDontShowAgain(DONT_SHOW_AGAIN_KEY_1, "Don't remind me again", onDontShowAgainListener)
+                .setManagedDontShowAgain(DONT_SHOW_AGAIN_KEY_1, "Don't remind me again", onDontShowAgainListener, () -> {
+                    showMessage("'Don't show again' is active!");
+                })
                 .setDontShowAgainColorRes(R.color.colorGreen)
                 .show();
     }
