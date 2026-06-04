@@ -156,7 +156,7 @@ public class MainActivity extends AppCompatActivity {
     void demoHeaderDialog() {
         new PrimeDialog(this)
                 .setTitle("HEY THERE!").setCancelable(false)
-                .setHeaderBackgroundRes(R.drawable.header)
+                .setHeaderDrawable(R.drawable.header)
                 .setHeaderOverlayTintDepth("65")
                 .setHeaderHeight(86).setIcon(R.drawable.ic_info)
                 .setMessage("Hi there,\nI'm PrimeDialog with Header support. An image resource, bitmap or a solid color can be used as header background.")
@@ -175,7 +175,7 @@ public class MainActivity extends AppCompatActivity {
         Typeface typeface = ResourcesCompat.getFont(this, R.font.maitree_medium);
         new PrimeDialog(this)
                 .setWindowAnimation(R.style.MyDialogAnimationStyle)
-                .setHeaderBackgroundRes(R.drawable.header, true)
+                .setHeaderDrawable(R.drawable.header, true)
                 .setHeaderOverlayTintDepth("45")
                 .setIcon(R.mipmap.ic_launcher).setIconTintEnabled(false)
                 .setTitle("HELLO!")
@@ -188,7 +188,7 @@ public class MainActivity extends AppCompatActivity {
     void demoListenerDialog() {
         new PrimeDialog(this)
                 .setDialogWidth(95).setIcon(R.drawable.ic_info)
-                .setHeaderBackgroundRes(R.drawable.header)
+                .setHeaderDrawable(R.drawable.header)
                 .setHeaderOverlayTintDepth("40")
                 .setTitle("I'M LISTENING")
                 .setMessage("Hey there!\nJust to let you know I have my ears to the ground for your clicks and interactions.\n\nBy the way, 'Don't remind me again' could be a handy feature for you.")
@@ -227,7 +227,7 @@ public class MainActivity extends AppCompatActivity {
     void demoListenerDialog2() {
         new PrimeDialog(this)
                 .setDialogWidth(95)
-                .setHeaderBackgroundRes(R.drawable.header)
+                .setHeaderDrawable(R.drawable.header)
                 .setHeaderOverlayTintDepth("40")
                 .setIcon(R.drawable.ic_info).setTitle("HEY THERE!")
                 .setMessage("Hi there,\nJust to let you know I have my ears to the ground for your clicks and interactions.\nBy the way, 'Don't remind me again' could be a handy feature for you.\n\nHi there,\nJust to let you know I have my ears to the ground for your clicks and interactions.\nBy the way, 'Don't remind me again' could be a handy feature for you.\nHi there,\nJust to let you know I have my ears to the ground for your clicks and interactions.\nBy the way, 'Don't remind me again' could be a handy feature for you.\nHi there,\nJust to let you know I have my ears to the ground for your clicks and interactions.\nBy the way, 'Don't remind me again' could be a handy feature for you.\nHi there,\nJust to let you know I have my ears to the ground for your clicks and interactions.\nBy the way, 'Don't remind me again' could be a handy feature for you.\nHi there,\nJust to let you know I have my ears to the ground for your clicks and interactions.\nBy the way, 'Don't remind me again' could be a handy feature for you.")

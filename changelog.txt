@@ -14,7 +14,11 @@ to be used with 'setWindowAnimation(styleRes)'.
 
 (v1.0.2)
 - Renamed 'setMessageMargin()' to 'setMargin()'
-- Ability to set custom layout/view margin by calling 'setMargin()'
+- Ability to set custom layout/view margins by calling 'setMargin()'
 - Added 'removeDontShowAgain(key)' for use with a dialog instance
-- Added 'PrimeDialog.removeDontShowAgain(context, key)' for use with no dialog instance
+- Added 'PrimeDialog.removeDontShowAgain(context, key)' and
+    'PrimeDialog.removeDontShowAgain(context, List<key>)'for use with no dialog instance
 - Added 'setManagedDontShowAgain(key, label, onDontShowAgainListener)'
+- Added 'setHeaderBitmap(bitmap)' and 'setHeaderDrawable(drawable)'
+- Renamed 'setHeaderBackgroundRes(drawableRes)' to 'setHeaderDrawable(drawableRes)'
+- Renamed 'setHeaderBackgroundColor()' to 'setHeaderColor()'

@@ -43,6 +43,7 @@ import androidx.annotation.StringRes
 import androidx.annotation.StyleRes
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.edit
 import androidx.core.content.res.ResourcesCompat
@@ -61,7 +62,7 @@ import kotlin.text.substring
 
 /**
  * PrimeDialog v1.0.2
- * Created by Ifedayo Bolade on May 28, 2026.
+ * Created by Ifedayo Bolade on June 4, 2026.
  */
 
 class PrimeDialog
@@ -244,35 +245,55 @@ constructor(
      * @param drawableRes The drawable resource id.
      * @param isAnimated Whether to apply a ken burns effect on the header drawable or not. Default value is true
      * */
-    fun setHeaderBackgroundRes(
+    fun setHeaderDrawable(
         @DrawableRes drawableRes: Int,
         isAnimated: Boolean = true
     ): PrimeDialog {
+        return setHeaderImage(drawableRes, isAnimated)
+    }
+
+    @JvmOverloads
+    /** Sets a drawable resources as the dialog header.
+     * @param drawable The drawable image for the header.
+     * @param isAnimated Whether to apply a ken burns effect on the header drawable or not. Default value is true
+     * */
+    fun setHeaderDrawable(drawable: Drawable, isAnimated: Boolean = true): PrimeDialog {
+        return setHeaderImage(drawable, isAnimated)
+    }
+
+    @JvmOverloads
+    /** Sets a bitmap image as the dialog header.
+     * @param bitmap The bitmap image for the header.
+     * @param isAnimated Whether to apply a ken burns effect on the header drawable or not. Default value is true
+     * */
+    fun setHeaderBitmap(bitmap: Bitmap, isAnimated: Boolean = true): PrimeDialog {
+        return setHeaderImage(bitmap, isAnimated)
+    }
+
+    private fun setHeaderImage(source: Any, isAnimated: Boolean = true): PrimeDialog {
         isHeaderShown = true
         headerLayout.isVisible = true
-        if(isAnimated){
-            binding.kenBurnsView.apply {
-                setImageResource(drawableRes)
-                isVisible = true
+        val view = if(isAnimated) binding.kenBurnsView else binding.imageView1
+        view.apply {
+            when(source){
+                is Int -> { setImageResource(source) }
+                is Bitmap -> { setImageBitmap(source) }
+                is Drawable -> { setImageDrawable(source) }
             }
-        } else {
-            binding.imageView1.apply {
-                setImageResource(drawableRes)
-                isVisible = true
-            }
+            isVisible = true
         }
         return this
     }
 
-    /** Sets the background color for the header. [setHeaderBackgroundRes] is given a higher
+    /** Sets the background color for the header. [setHeaderDrawable] is given a higher
      * priority if called alongside.
-     * @param colorRes The color resource id.
-     * @see [setHeaderBackgroundRes]*/
-    fun setHeaderBackgroundColor(@ColorRes colorRes: Int): PrimeDialog {
+     * @param color Either of the color int value or color resource id.
+     * @see [setHeaderDrawable]*/
+    fun setHeaderColor(color: Int): PrimeDialog {
         isHeaderShown = true
         headerLayout.apply {
             isVisible = true
-            setBackgroundColor(getColor(colorRes))
+            setBackgroundColor(getColor(color))
         }
         binding.kenBurnsView.isVisible = false
         binding.imageView1.isVisible = false
@@ -423,18 +444,18 @@ constructor(
         return this
     }
 
-    private fun setHeaderOverlayTint(@ColorInt color: Int): PrimeDialog {
+    /** Set the tint color for the header overlay.
+     * @param color The tint color. This should be a transparent color. */
+    fun setHeaderOverlayTint(@ColorInt color: Int): PrimeDialog {
         setHeaderOverlayEnabled()
-        overlay.setBackgroundColor(color)
+        overlay.setBackgroundColor(getColor(color))
         return this
     }
 
+    /** Set the tint color resource for the header overlay.
+     * @param colorRes The tint color resource id. This color should be transparent. */
     fun setHeaderOverlayTintRes(@ColorRes colorRes: Int): PrimeDialog {
         return setHeaderOverlayTint(getColor(colorRes))
-    }
-
-    fun setHeaderOverlayTint(colorCode: String): PrimeDialog {
-        return setHeaderOverlayTint(colorCode.toColorInt())
     }
 
     private fun initializeTitle(isVisible: Boolean = true): AppCompatTextView {
@@ -638,9 +659,9 @@ constructor(
      * view, and it's expected to take the entire screen volume (like a regular activity class).
      * You may need to handle inset if you are using this function.
      *
-     * IMPORTANT NOTE: This height explicitly applies to the ScrollView parent of the dialog message.
-     * The height of 'Title', 'Don’t show again' and 'Action buttons' are not taken into
-     * account.
+     * IMPORTANT NOTE: This percentageHeight explicitly applies to the ScrollView parent of
+     * the dialog message. The height of 'Title', 'Don’t show again' and 'Action buttons' are
+     * not taken into account.
      * @author
      * @see setDialogWidth
      * @see setDimension*/
@@ -1120,7 +1141,7 @@ constructor(
 
     /** Clears the 'Don’t show again' preference entry that prevents dialog from
      * showing after don't show again has been set.
-     * @param key The string key previously passed into the dialog's [setDontShowAgain] function. */
+     * @param key The string key previously passed into dialog's [setManagedDontShowAgain] function. */
     fun removeDontShowAgain(key: String): PrimeDialog {
         if(key.isEmpty()){
             showDebugToast("cancelDontShowAgain() 'key' is empty")
@@ -1882,6 +1903,20 @@ constructor(
                 return false
             }
             return preference.edit().remove("prime_dialog_$key").commit()
+        }
+
+        /** Clears the 'Don’t show again' preference entry that prevents dialog from
+         * showing after don't show again has been set.
+         * @param context The
+         * @param keys A list of keys previously passed into PrimeDialog [setDontShowAgain] function. */
+        fun removeDontShowAgain(context: Context, keys: List<String>) {
+            val preference = PreferenceManager.getDefaultSharedPreferences(context)
+            for(key in keys){
+                if(!preference.contains("prime_dialog_$key")){
+                    Log.i(TAG, "No 'Don’t show again' entry for - $key")
+                }
+                preference.edit { remove("prime_dialog_$key") }
+            }
         }
     }
 }
