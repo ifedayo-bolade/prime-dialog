@@ -162,12 +162,12 @@ constructor(
         return this
     }
 
-    @JvmOverloads
     /**
      * Sets the view to be displayed as the dialog's content.
      * @param view The view to be displayed. Especially programmatically created views.
      * @param layoutParams The layout parameters to be applied to the view.
      */
+    @JvmOverloads
     fun setCustomView(view: View, layoutParams: FrameLayout.LayoutParams? = null): PrimeDialog {
         isCustomView = true
         frameLayout.addView(view)
@@ -239,11 +239,11 @@ constructor(
     /** Indicates that a header-related function has been called. */
     private var isHeaderConfiguring = false
 
-    @JvmOverloads
     /** Sets a drawable resources as the dialog header.
      * @param drawableRes The drawable resource id.
      * @param isAnimated Whether to apply a ken burns effect on the header drawable or not. Default value is true
-     * */
+     */
+    @JvmOverloads
     fun setHeaderDrawable(
         @DrawableRes drawableRes: Int,
         isAnimated: Boolean = true
@@ -251,20 +251,20 @@ constructor(
         return setHeaderImage(drawableRes, isAnimated)
     }
 
-    @JvmOverloads
     /** Sets a drawable resources as the dialog header.
      * @param drawable The drawable image for the header.
      * @param isAnimated Whether to apply a ken burns effect on the header drawable or not. Default value is true
-     * */
+     */
+    @JvmOverloads
     fun setHeaderDrawable(drawable: Drawable, isAnimated: Boolean = true): PrimeDialog {
         return setHeaderImage(drawable, isAnimated)
     }
 
-    @JvmOverloads
     /** Sets a bitmap image as the dialog header.
      * @param bitmap The bitmap image for the header.
      * @param isAnimated Whether to apply a ken burns effect on the header drawable or not. Default value is true
-     * */
+     */
+    @JvmOverloads
     fun setHeaderBitmap(bitmap: Bitmap, isAnimated: Boolean = true): PrimeDialog {
         return setHeaderImage(bitmap, isAnimated)
     }
@@ -577,11 +577,11 @@ constructor(
         return setMessageTypeface(typeface)
     }
 
-    @JvmOverloads
     /**Sets line spacing with a multiplier value of 1.0F.
      * @param add Addition value
      * @param multiplier Multiplier value. Default is 1.0F
      */
+    @JvmOverloads
     fun setMessageLineSpacing(add: Float, multiplier: Float = 1.0F): PrimeDialog {
         message.setLineSpacing(
             TypedValue.applyDimension(
@@ -663,7 +663,7 @@ constructor(
      * not taken into account.
      * @author
      * @see setDialogWidth
-     * @see setDimension*/
+     * @see setDimension */
     @JvmOverloads
     fun setDialogHeight(percentageHeight: Int, disregardFraction: Boolean = false): PrimeDialog {
         dialogView?.apply {
@@ -952,7 +952,6 @@ constructor(
     private var actionTextColorMap = hashMapOf<Int, Int>()
     private var isActionTextColorSet = false
 
-    @JvmOverloads
     /**
      * Defines the text color for the dialog action buttons, calling this method will overwrite any existing
      * modifications to the action buttons, including those from [setAccentColorRes].
@@ -963,11 +962,11 @@ constructor(
      * @param colorRes The color to set on the dialog action TextViews.
      * @see PrimeDialog.setActionTextAppearance
      */
+    @JvmOverloads
     fun setActionTextColorRes(buttonId: Int? = null, @ColorRes colorRes: Int): PrimeDialog {
         return setActionTextColor(buttonId, getColor(colorRes))
     }
 
-    @JvmOverloads
     /**
      * Defines the text color for the dialog action buttons, calling this method will overwrite any existing
      * modifications to the action buttons, including those from [setAccentColorRes].
@@ -978,6 +977,7 @@ constructor(
      * @param colorInt The color to set on the dialog action TextViews.
      * @see PrimeDialog.setActionTextAppearance
      */
+    @JvmOverloads
     fun setActionTextColor(buttonId: Int? = null, @ColorInt colorInt: Int): PrimeDialog {
         buttonId?.let {
             actionTextColorMap[buttonId] = getColor(colorInt)
@@ -1154,7 +1154,6 @@ constructor(
         return this
     }
 
-    @JvmOverloads
     /** A checkbox will be shown on this dialog with a 'Don’t show again' label. However,
      * you'll need to write your 'Don’t show again' logic by utilizing [OnDontShowAgainListener]
      * callback. Use [setManagedDontShowAgain] if you prefer PrimeDialog to manage 'Don’t show
@@ -1162,8 +1161,8 @@ constructor(
      * @param label The text label to display on the CheckBox.
      * @param onDontShowAgainListener The listener to govern your 'Don’t show again' events.
      * @see setManagedDontShowAgain
-     * logic.
      */
+    @JvmOverloads
     fun setDontShowAgain(
         label: String = checkboxAttributes.label,
         onDontShowAgainListener: OnDontShowAgainListener? = null
@@ -1171,20 +1170,21 @@ constructor(
         return configureDontShowAgain(null, label, onDontShowAgainListener)
     }
 
-    @JvmOverloads
     /** A 'Don’t show again' checkbox will be shown on this dialog. If the checkbox is
-     * checked before the dialog gets dismissed. The dialog will not be shown again.
-     * To get the dialog to show again, call [removeDontShowAgain] and pass in the 'key'
+     * checked before the dialog gets dismissed. The dialog will not be shown again, instead
+     * the [OnDialogSuppressedListener] callback will get fired (if provided).
+     * To get the dialog to show up again, call [removeDontShowAgain] and pass in the 'key'
      * parameter.
      * @param key A unique string key for 'Don’t show again' record entry.
-     * @param label The text label of the CheckBox.
-     * @param onDontShowAgainListener Optional listener to intercept 'Don’t show again' events.
-     * @param onDialogSuppressedListener Optional listener to intercept an attempt to show a
+     * @param label (Optional) The text label for the CheckBox.
+     * @param onDontShowAgainListener (Optional) Listener to intercept 'Don’t show again' events.
+     * @param onDialogSuppressedListener (Optional) Listener to intercept an attempt to show a
      *      dialog that has been suppressed by a previous [setManagedDontShowAgain] call.
      *      This callback is fired instead of displaying the dialog, allowing the host
      *      application to perform an alternative action if needed.
      * @see setDontShowAgain
      */
+    @JvmOverloads
     fun setManagedDontShowAgain(
         key: String,
         label: String = checkboxAttributes.label,
@@ -1737,7 +1737,6 @@ constructor(
     private var isCornerRadiusSet = false
     private var isDefaultCornersEnabled = true
 
-    @JvmOverloads
     /**
      * Set rounded-corners of the dialog with a specified radius, dialog
      * padding and background color. This method targets API 21+
@@ -1748,6 +1747,7 @@ constructor(
      * automatically passed to [setBackgroundColor].
      * @see PrimeDialog.setRoundedCorners
      */
+    @JvmOverloads
     fun setRoundedCorners(
         cornerRadiusDp: Int = cornerRadius,
         dialogPaddingDp: Int = dialogPadding,
