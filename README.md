@@ -47,7 +47,7 @@ dependencyResolutionManagement {
 
 ```kotlin
 dependencies {
-    implementation("com.github.ifedayo-bolade:prime-dialog:1.0.1")
+    implementation("com.github.ifedayo-bolade:prime-dialog:1.0.2")
 }
 ```
 
