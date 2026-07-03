@@ -24,3 +24,12 @@ to be used with 'setWindowAnimation(styleRes)'.
 - Added 'setHeaderBitmap(bitmap)' and 'setHeaderDrawable(drawable)'
 - Renamed 'setHeaderBackgroundRes(drawableRes)' to 'setHeaderDrawable(drawableRes)'
 - Renamed 'setHeaderBackgroundColor()' to 'setHeaderColor()'
+
+(v1.0.3)
+- Fixed 'isShowing' always returning 'false' due to being evaluated once at construction
+ instead of on each access.
+- Added single-directional window animations:
+    WINDOW_ANIMATION_FADE_IN_ONLY,
+    WINDOW_ANIMATION_FADE_OUT_ONLY,
+    WINDOW_ANIMATION_SLIDE_IN_ONLY,
+    WINDOW_ANIMATION_SLIDE_OUT_ONLY

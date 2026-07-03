@@ -48,10 +48,10 @@ import androidx.core.content.edit
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.widget.CompoundButtonCompat
 import androidx.core.widget.ImageViewCompat
+import androidx.preference.PreferenceManager
 import kotlin.properties.Delegates
 import androidx.core.graphics.toColorInt
 import androidx.core.view.isVisible
-import androidx.preference.PreferenceManager
 import ifedayo.bolade.primedialog.databinding.PrimeDialogLayoutBinding
 import kotlin.apply
 import kotlin.let
@@ -488,13 +488,19 @@ constructor(
     }
 
     @JvmOverloads
-    fun setTitleTypefaceRes(@FontRes fontRes: Int, style: Int = Typeface.BOLD): PrimeDialog {
+    fun setTitleTypefaceRes(
+        @FontRes fontRes: Int,
+        style: Int = if(isHeaderShown) Typeface.NORMAL else Typeface.BOLD
+    ): PrimeDialog {
         val typeface = ResourcesCompat.getFont(context, fontRes) ?: TYPEFACE_SANS_SERIF_MEDIUM
         return setTitleTypeface(typeface, style)
     }
 
     @JvmOverloads
-    fun setTitleTypeface(typeface: Typeface, style: Int = Typeface.BOLD): PrimeDialog {
+    fun setTitleTypeface(
+        typeface: Typeface,
+        style: Int = if(isHeaderShown) Typeface.NORMAL else Typeface.BOLD
+    ): PrimeDialog {
         titleAttributes.typeface = typeface
         titleAttributes.typefaceStyle = style
         return this
@@ -1458,7 +1464,8 @@ constructor(
         return default
     }
 
-    val isShowing: Boolean = dialog.isShowing
+    val isShowing: Boolean
+        get() = dialog.isShowing
 
     /** Commands a build of the dialog with all specified parameters.
      * @return A dialog instance with all defined parameters applied. */
@@ -1879,10 +1886,18 @@ constructor(
 
         @JvmField /** Dialog window fade in/out animation style resource id. */
         var WINDOW_ANIMATION_FADE = R.style.FadeAnimation
+        @JvmField /** Dialog window fade in (only) animation style resource id. */
+        var WINDOW_ANIMATION_FADE_IN_ONLY = R.style.FadeAnimation_In
+        @JvmField /** Dialog window fade out (only) animation style resource id. */
+        var WINDOW_ANIMATION_FADE_OUT_ONLY = R.style.FadeAnimation_Out
         @JvmField /** Dialog window flash in/out animation style resource id. */
         var WINDOW_ANIMATION_FLASH = R.style.FlashAnimation
         @JvmField /** Dialog window slide in/out animation style resource id. */
         var WINDOW_ANIMATION_SLIDE = R.style.SlideAnimation
+        @JvmField /** Dialog window slide in (only) animation style resource id. */
+        var WINDOW_ANIMATION_SLIDE_IN_ONLY = R.style.SlideAnimation_In
+        @JvmField /** Dialog window slide out (only) animation style resource id. */
+        var WINDOW_ANIMATION_SLIDE_OUT_ONLY = R.style.SlideAnimation_Out
 
         @JvmField /** Dialog dismissed by an explicit (non-button action) call to 'dismiss()'. */
         var DISMISS_ACTION_INTERNAL: Int = 1411
